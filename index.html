@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="fil">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lupon ng Tagapamayapa - Barangay Case Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/lupon-logo.png">
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════
+       LOGIN SCREEN
+  ════════════════════════════════════ -->
+  <div id="login-screen">
+    <div class="login-box">
+      <img src="assets/lupon-logo.png" class="login-logo" alt="Lupon Seal" onerror="this.style.display='none'">
+      <h1>Lupong Tagapamayapa</h1>
+      <p class="subtitle">Barangay Case Management System</p>
+
+      <!-- Setup / Change Settings Section -->
+      <div id="setup-section" style="display:none;">
+        <div class="barangay-setup">
+          <label>Barangay Name</label>
+          <input type="text" id="setup-brgy" placeholder="e.g. Barangay Dadiangas West">
+          <label>Municipality / City</label>
+          <input type="text" id="setup-muni" placeholder="e.g. General Santos City">
+          <label>Province</label>
+          <input type="text" id="setup-prov" placeholder="e.g. South Cotabato">
+          <label>New Password (min 6 chars — leave blank to keep current)</label>
+          <input type="password" id="setup-pass1" placeholder="New password">
+          <label>Confirm Password</label>
+          <input type="password" id="setup-pass2" placeholder="Confirm password">
+        </div>
+        <button class="login-btn" onclick="setupSystem()">⚙️ Save Settings & Login</button>
+        <div id="setup-error" class="login-error"></div>
+        <p class="login-hint" style="margin-top:10px;">
+          <span class="setup-toggle" onclick="toggleSetup(false)">← Back to Login</span>
+        </p>
+      </div>
+
+      <!-- Login Section -->
+      <div id="login-section">
+        <input type="text" id="login-user" placeholder="Username" value="admin" autocomplete="username">
+        <input type="password" id="login-pass" placeholder="Password" value="lupon2026" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter') doLogin()">
+        <button class="login-btn" onclick="doLogin()"> Login</button>
+        <div id="login-error" class="login-error">Incorrect username or password.</div>
+        <p class="login-hint">
+          <span class="setup-toggle" onclick="toggleSetup(true)">
+            ⚙️ Change Barangay Info / Password
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════
+       MAIN APPLICATION
+  ════════════════════════════════════ -->
+  <div id="app">
+
+    <!-- ── Header ── -->
+    <header>
+      <div class="header-inner">
+        <img src="assets/lupon-logo.png" class="header-logo" alt="Seal" onerror="this.style.display='none'">
+        <div>
+          <div class="hdr-brgy" id="hdr-brgy-name">
+            Barangay &nbsp;|&nbsp; Republika ng Pilipinas
+          </div>
+          <div class="hdr-title">Lupong Tagapamayapa</div>
+        </div>
+        <div class="hdr-right">
+          <div style="text-align:right;">
+            <div id="live-clock"></div>
+            <div id="live-date"></div>
+          </div>
+          <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <!-- ── Navigation ── -->
+      <nav>
+        <button class="active" onclick="showPage('dashboard')"> Dashboard</button>
+        <button onclick="showPage('filing')"> File a Case</button>
+        <button onclick="showPage('cases')"> All Cases</button>
+        <button onclick="showPage('hearings')"> Hearings</button>
+        <button onclick="showPage('settlement')"> Settlement</button>
+        <button onclick="showPage('tracer')"> Tracer</button>
+        <button onclick="showPage('documents')">Documents</button>
+        <button onclick="showPage('lupons')"> Lupon Members</button>
+        <button onclick="showPage('backup')"> Backup</button>
+      </nav>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <!-- Print Area Overlay -->
+    <div id="print-area">
+      <button class="pclose" onclick="closePrint()">✕ Close</button>
+      <div id="print-content"></div>
+    </div>
+
+    <!-- ── Pages Container ── -->
+    <div class="container">
+
+      <!-- ════ DASHBOARD ════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="sec-title"> Dashboard</div>
+
+        <div class="stats-row">
+          <div class="stat-box s-blue">
+            <div class="num" id="st-total">0</div>
+            <div class="lbl">Total Cases</div>
+          </div>
+          <div class="stat-box s-gold">
+            <div class="num" id="st-pending">0</div>
+            <div class="lbl">Pending</div>
+          </div>
+          <div class="stat-box s-purple">
+            <div class="num" id="st-mediation">0</div>
+            <div class="lbl">Active / Mediation</div>
+          </div>
+          <div class="stat-box s-green">
+            <div class="num" id="st-settled">0</div>
+            <div class="lbl">Settled</div>
+          </div>
+          <div class="stat-box s-red">
+            <div class="num" id="st-escalated">0</div>
+            <div class="lbl">Escalated</div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-header">📋 Recent Cases</div>
+            <div class="card-body">
+              <div class="tbl-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Case No.</th>
+                      <th>Complainant</th>
+                      <th>Nature</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-recent"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">📅 Upcoming Hearings</div>
+            <div class="card-body" id="dash-hearings">
+              <div class="empty">
+                <div class="ei">📭</div>
+                <p>No upcoming hearings.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /dashboard -->
+
+
+      <!-- ════ FILE A CASE ════ -->
+      <div class="page" id="page-filing">
+        <div class="sec-title">📝 File a New Complaint</div>
+
+        <div class="card">
+          <div class="card-header">📋 Case Information</div>
+          <div class="card-body">
+            <div class="grid3">
+              <div class="fg">
+                <label>Case Number</label>
+                <input id="f-no" readonly style="background:#f0f0e8;cursor:default;">
+              </div>
+              <div class="fg">
+                <label>Date Filed <span class="req">*</span></label>
+                <input type="date" id="f-date">
+              </div>
+              <div class="fg">
+                <label>Nature of Complaint <span class="req">*</span></label>
+                <select id="f-nature">
+                  <option value="">— Select —</option>
+                  <option>Annoyance / Nuisance</option>
+                  <option>Boundary Dispute</option>
+                  <option>Damage to Property</option>
+                  <option>Debt / Collection</option>
+                  <option>Family / Domestic</option>
+                  <option>Light Physical Injuries</option>
+                  <option>Noise Complaint</option>
+                  <option>Oral Defamation (Slight)</option>
+                  <option>Public Scandal</option>
+                  <option>Trespass</option>
+                  <option>Unjust Vexation</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <!-- <div class="fg">
+                <label>Status</label>
+                <select id="f-status">
+                  <option>Pending</option>
+                  <option>Active</option>
+                  <option>Mediation</option>
+                  <option>Settled</option>
+                  <option>Dismissed</option>
+                  <option>Escalated</option>
+                </select>
+              </div> -->
+              <input type="hidden" id="f-status" value="Pending">
+              <!-- <div class="fg">
+                <label>Assigned Pangkat</label>
+                <input id="f-pangkat" placeholder="Lupon member name">
+              </div> -->
+              <div class="fg">
+                <label>Assigned Pangkat Members</label>
+                <select id="f-pangkat" multiple style="height:90px;"
+                  title="Hold Ctrl (or Cmd on Mac) to select multiple members">
+                </select>
+                <div style="font-size:.75rem;color:#888;margin-top:3px;">
+                  Hold Ctrl to select multiple members
+                </div>
+              </div>
+              <div class="fg">
+                <label>Docket No. (optional)</label>
+                <input id="f-docket" placeholder="Court docket if any">
+              </div>
+              <div class="fg full">
+                <label>Brief Description (Detalye ng Reklamo)</label>
+                <textarea id="f-desc" placeholder="Ilarawan ang pangyayari / Details of the complaint..." style="min-height:80px;"></textarea>
+              </div>
+              <div class="fg full">
+                <label>Relief / Prayer (Hinihinging Lunas)</label>
+                <textarea id="f-relief" placeholder="Ano ang gusto niyang mangyari / What the complainant wants..." style="min-height:60px;"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-header">👤 Complainant (Nagrereklamo)</div>
+            <div class="card-body">
+              <div class="grid2">
+                <div class="fg">
+                  <label>Last Name <span class="req">*</span></label>
+                  <input id="fc-last" placeholder="Apelyido" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg">
+                  <label>First Name <span class="req">*</span></label>
+                  <input id="fc-first" placeholder="Pangalan" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg">
+                  <label>Middle Name</label>
+                  <input id="fc-mid" placeholder="Gitnang Pangalan" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg">
+                  <label>Age</label>
+                  <input type="number" id="fc-age" min="1" max="120" placeholder="Edad">
+                </div>
+                <div class="fg full">
+                  <label>Address</label>
+                  <input id="fc-addr" placeholder="Tirahan">
+                </div>
+                <div class="fg">
+                  <label>Contact No.</label>
+                  <input id="fc-tel" placeholder="09XXXXXXXXX" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+                </div>
+                <div class="fg">
+                  <label>Civil Status</label>
+                  <select id="fc-civil">
+                    <option>Single</option>
+                    <option>Married</option>
+                    <option>Widowed</option>
+                    <option>Separated</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">👤 Respondent (Inaakusahan)</div>
+            <div class="card-body">
+              <div class="grid2">
+                <div class="fg">
+                  <label>Last Name <span class="req">*</span></label>
+                  <input id="fr-last" placeholder="Apelyido" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg">
+                  <label>First Name <span class="req">*</span></label>
+                  <input id="fr-first" placeholder="Pangalan" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg">
+                  <label>Middle Name</label>
+                  <input id="fr-mid" placeholder="Gitnang Pangalan" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg">
+                  <label>Age</label>
+                  <input type="number" id="fr-age" min="1" max="120" placeholder="Edad">
+                </div>
+                <div class="fg full">
+                  <label>Address</label>
+                  <input id="fr-addr" placeholder="Tirahan">
+                </div>
+                <div class="fg">
+                  <label>Contact No.</label>
+                  <input id="fr-tel" placeholder="09XXXXXXXXX" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+                </div>
+                <div class="fg">
+                  <label>Civil Status</label>
+                  <select id="fr-civil">
+                    <option>Single</option>
+                    <option>Married</option>
+                    <option>Widowed</option>
+                    <option>Separated</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">📅 Initial Hearing (Optional)</div>
+          <div class="card-body">
+            <div class="grid3">
+              <div class="fg">
+                <label>Date</label>
+                <input type="date" id="f-hdate">
+              </div>
+              <div class="fg">
+                <label>Time</label>
+                <input type="time" id="f-htime">
+              </div>
+              <div class="fg">
+                <label>Venue</label>
+                <input id="f-hvenue" placeholder="e.g. Barangay Hall">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-navy" onclick="saveCase()">💾 Save Case</button>
+          <button class="btn btn-gold" onclick="previewCase()">🖨️ Preview & Print</button>
+          <button class="btn btn-outline" onclick="clearCaseForm()">🗑️ Clear Form</button>
+        </div>
+      </div><!-- /filing -->
+
+
+      <!-- ════ ALL CASES ════ -->
+      <div class="page" id="page-cases">
+        <div class="sec-title">📁 All Cases</div>
+        <div class="card">
+          <div class="card-body">
+            <div class="search-bar">
+              <input id="srch" placeholder="🔍 Search case no., name, nature..." oninput="renderCases()">
+              <select id="flt-status" onchange="renderCases()">
+                <option value="">All Statuses</option>
+                <option>Pending</option>
+                <option>Active</option>
+                <option>Mediation</option>
+                <option>Settled</option>
+                <option>Dismissed</option>
+                <option>Escalated</option>
+              </select>
+              <button class="btn btn-gold btn-sm" onclick="exportWord()">
+                📄 Export to Word
+              </button>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Case No.</th>
+                    <th>Date Filed</th>
+                    <th>Nature</th>
+                    <th>Complainant</th>
+                    <th>Respondent</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="cases-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /cases -->
+
+
+      <!-- ════ HEARINGS ════ -->
+      <div class="page" id="page-hearings">
+        <div class="sec-title">📅 Hearing Schedule</div>
+
+        <div class="card">
+          <div class="card-header">➕ Schedule Hearing</div>
+          <div class="card-body">
+            <div class="grid3">
+              <div class="fg">
+                <label>Case <span class="req">*</span></label>
+                <select id="h-case"></select>
+              </div>
+              <div class="fg">
+                <label>Date <span class="req">*</span></label>
+                <input type="date" id="h-date">
+              </div>
+              <div class="fg">
+                <label>Time</label>
+                <input type="time" id="h-time">
+              </div>
+              <div class="fg">
+                <label>Venue</label>
+                <input id="h-venue" placeholder="e.g. Barangay Hall">
+              </div>
+              <div class="fg">
+                <label>Hearing Type</label>
+                <select id="h-type">
+                  <option>First Hearing</option>
+                  <option>Mediation</option>
+                  <option>Conciliation</option>
+                  <option>Arbitration</option>
+                  <option>Follow-up</option>
+                  <option>Cancelled</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Mediator / Pangkat</label>
+                <input id="h-mediator" placeholder="Name">
+              </div>
+              <div class="fg full">
+                <label>Notes</label>
+                <textarea id="h-notes" style="min-height:54px;"></textarea>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-navy" onclick="addHearing()">
+                📅 Add Hearing
+              </button>
+              <button class="btn btn-gold btn-sm" onclick="printHearings()">
+                🖨️ Print Schedule
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">📋 All Scheduled Hearings</div>
+          <div class="card-body" id="hearing-list">
+            <div class="empty">
+              <div class="ei">📭</div>
+              <p>No hearings yet.</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /hearings -->
+
+
+      <!-- ════ SETTLEMENT ════ -->
+      <div class="page" id="page-settlement">
+        <div class="sec-title">🤝 Settlement / Resolution</div>
+
+        <div class="card">
+          <div class="card-header">➕ Record Settlement</div>
+          <div class="card-body">
+            <div class="grid3">
+              <div class="fg">
+                <label>Case <span class="req">*</span></label>
+                <select id="s-case"></select>
+              </div>
+              <div class="fg">
+                <label>Date <span class="req">*</span></label>
+                <input type="date" id="s-date">
+              </div>
+              <div class="fg">
+                <label>Resolution Type</label>
+                <select id="s-type">
+                  <option>Amicable Settlement</option>
+                  <option>Mediation Agreement</option>
+                  <option>Conciliation Agreement</option>
+                  <option>Arbitration Award</option>
+                  <option>Dismissed (Lack of Merit)</option>
+                  <option>Dismissed (Failure to Appear)</option>
+                  <option>Escalated to Court / MTC</option>
+                  <option>Repudiated</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Lupon Chairperson</label>
+                <input id="s-captain" placeholder="Punong Barangay name">
+              </div>
+              <div class="fg">
+                <label>Witness(es)</label>
+                <input id="s-witness" placeholder="Names of witnesses">
+              </div>
+            </div>
+            <div class="fg" style="margin-top:12px;">
+              <label>Terms / Resolution Details <span class="req">*</span></label>
+              <textarea id="s-terms" style="min-height:96px;"
+                placeholder="Buong detalye ng kasunduan o resolusyon..."></textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-green" onclick="addSettlement()">
+                Record Settlement
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">📋 Settlement Records</div>
+          <div class="card-body">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Case No.</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Summary</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="settle-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /settlement -->
+
+
+      <!-- ════ TRACER ════ -->
+      <div class="page" id="page-tracer">
+        <div class="sec-title">📋 Tracer — Case Docket Record</div>
+
+        <div class="card">
+          <div class="card-header">📋 Tracer Information</div>
+          <div class="card-body">
+            <div class="grid3">
+              <div class="fg">
+                <label>Barangay Case No. <span class="req">*</span></label>
+                <input id="tr-caseno" placeholder="e.g. 001-25">
+              </div>
+              <div class="fg">
+                <label>O.R. # (Official Receipt)</label>
+                <input id="tr-or" placeholder="e.g. 1497238">
+              </div>
+              <div class="fg">
+                <label>Nature of Case <span class="req">*</span></label>
+                <input id="tr-nature" placeholder="e.g. Boundary Dispute">
+              </div>
+              <div class="fg">
+                <label>Date Filed</label>
+                <input type="date" id="tr-filed">
+              </div>
+              <div class="fg">
+                <label>Date of Summon</label>
+                <input type="date" id="tr-sumdate">
+              </div>
+              <div class="fg">
+                <label>Time of Summon</label>
+                <input type="time" id="tr-sumtime">
+              </div>
+              <div class="fg">
+                <label>Time Filed</label>
+                <input type="time" id="tr-filedtime">
+              </div>
+              <div class="fg">
+                <label>Summon Received By</label>
+                <input id="tr-sumby" placeholder="Name of person who received">
+              </div>
+              <div class="fg">
+                <label>Relation to Respondent</label>
+                <input id="tr-sumrel" placeholder="e.g. Neighbor, Spouse">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-header">👤 Complainant/s</div>
+            <div class="card-body">
+              <div class="grid2">
+                <div class="fg full">
+                  <label>Full Name <span class="req">*</span></label>
+                  <input id="tr-cname" placeholder="Full name" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg full">
+                  <label>Address</label>
+                  <input id="tr-caddr" placeholder="Address">
+                </div>
+                <div class="fg full">
+                  <label>Contact No.</label>
+                  <input id="tr-ctel" placeholder="09XXXXXXXXX" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">👤 Respondent/s</div>
+            <div class="card-body">
+              <div class="grid2">
+                <div class="fg full">
+                  <label>Full Name <span class="req">*</span></label>
+                  <input id="tr-rname" placeholder="Full name" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+                </div>
+                <div class="fg full">
+                  <label>Address</label>
+                  <input id="tr-raddr" placeholder="Address">
+                </div>
+                <div class="fg full">
+                  <label>Contact No.</label>
+                  <input id="tr-rtel" placeholder="09XXXXXXXXX" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">⚖️ Mediation (Punong Barangay)</div>
+          <div class="card-body">
+            <div class="fg" style="margin-bottom:12px;max-width:180px;">
+              <label>Total Days in Barangay</label>
+              <input type="number" id="tr-days" placeholder="0" min="0">
+            </div>
+            <div class="tbl-wrap">
+              <table class="tracer-tbl">
+                <thead>
+                  <tr>
+                    <th style="width:60px;">#</th>
+                    <th>Schedule of Hearing</th>
+                    <th>Time</th>
+                    <th>Disposition</th>
+                    <th>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="seq-cell">1st</td>
+                    <td><input type="date" id="m1-date" class="tbl-input"></td>
+                    <td><input type="time" id="m1-time" class="tbl-input"></td>
+                    <td>
+                      <select id="m1-disp" class="tbl-input">
+                        <option value="">—</option>
+                        <option>Settled</option>
+                        <option>Unsettled</option>
+                        <option>Postponed</option>
+                        <option>Failed to Appear</option>
+                      </select>
+                    </td>
+                    <td><input id="m1-rem" class="tbl-input" placeholder="Remarks"></td>
+                  </tr>
+                  <tr>
+                    <td class="seq-cell">2nd</td>
+                    <td><input type="date" id="m2-date" class="tbl-input"></td>
+                    <td><input type="time" id="m2-time" class="tbl-input"></td>
+                    <td>
+                      <select id="m2-disp" class="tbl-input">
+                        <option value="">—</option>
+                        <option>Settled</option>
+                        <option>Unsettled</option>
+                        <option>Postponed</option>
+                        <option>Failed to Appear</option>
+                      </select>
+                    </td>
+                    <td><input id="m2-rem" class="tbl-input" placeholder="Remarks"></td>
+                  </tr>
+                  <tr>
+                    <td class="seq-cell">3rd</td>
+                    <td><input type="date" id="m3-date" class="tbl-input"></td>
+                    <td><input type="time" id="m3-time" class="tbl-input"></td>
+                    <td>
+                      <select id="m3-disp" class="tbl-input">
+                        <option value="">—</option>
+                        <option>Settled</option>
+                        <option>Unsettled</option>
+                        <option>Postponed</option>
+                        <option>Failed to Appear</option>
+                      </select>
+                    </td>
+                    <td><input id="m3-rem" class="tbl-input" placeholder="Remarks"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">🤝 Conciliation (Pangkat ng Tagapagkasundo)</div>
+          <div class="card-body">
+            <div class="grid3" style="margin-bottom:12px;">
+              <div class="fg">
+                <label>Chairman</label>
+                <input id="tr-pchair" placeholder="Name">
+              </div>
+              <div class="fg">
+                <label>Secretary</label>
+                <input id="tr-psec" placeholder="Name">
+              </div>
+              <div class="fg">
+                <label>Member</label>
+                <input id="tr-pmem" placeholder="Name">
+              </div>
+            </div>
+            <div class="tbl-wrap">
+              <table class="tracer-tbl">
+                <thead>
+                  <tr>
+                    <th style="width:60px;">#</th>
+                    <th>Schedule of Hearing</th>
+                    <th>Time</th>
+                    <th>Disposition</th>
+                    <th>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="seq-cell">1st</td>
+                    <td><input type="date" id="c1-date" class="tbl-input"></td>
+                    <td><input type="time" id="c1-time" class="tbl-input"></td>
+                    <td>
+                      <select id="c1-disp" class="tbl-input">
+                        <option value="">—</option>
+                        <option>Settled</option>
+                        <option>Unsettled</option>
+                        <option>Postponed</option>
+                        <option>CFA Issued</option>
+                      </select>
+                    </td>
+                    <td><input id="c1-rem" class="tbl-input" placeholder="Remarks"></td>
+                  </tr>
+                  <tr>
+                    <td class="seq-cell">2nd</td>
+                    <td><input type="date" id="c2-date" class="tbl-input"></td>
+                    <td><input type="time" id="c2-time" class="tbl-input"></td>
+                    <td>
+                      <select id="c2-disp" class="tbl-input">
+                        <option value="">—</option>
+                        <option>Settled</option>
+                        <option>Unsettled</option>
+                        <option>Postponed</option>
+                        <option>CFA Issued</option>
+                      </select>
+                    </td>
+                    <td><input id="c2-rem" class="tbl-input" placeholder="Remarks"></td>
+                  </tr>
+                  <tr>
+                    <td class="seq-cell">Ext.</td>
+                    <td><input type="date" id="c3-date" class="tbl-input"></td>
+                    <td><input type="time" id="c3-time" class="tbl-input"></td>
+                    <td>
+                      <select id="c3-disp" class="tbl-input">
+                        <option value="">—</option>
+                        <option>Settled</option>
+                        <option>Unsettled</option>
+                        <option>Postponed</option>
+                        <option>CFA Issued</option>
+                      </select>
+                    </td>
+                    <td><input id="c3-rem" class="tbl-input" placeholder="Remarks"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="grid2" style="margin-top:12px;">
+              <div class="fg">
+                <label>Date of Transmittal to Court</label>
+                <input type="date" id="tr-transmit">
+              </div>
+              <div class="fg">
+                <label>Received By (Court)</label>
+                <input id="tr-recvd" placeholder="Name / Office">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-navy" onclick="printTracer()">🖨️ Print Tracer</button>
+          <button class="btn btn-gold" onclick="exportTracerWord()">📄 Export to Word</button>
+          <button class="btn btn-outline" onclick="clearTracer()">🗑️ Clear</button>
+        </div>
+      </div><!-- /tracer -->
+
+
+      <!-- ════ DOCUMENTS ════ -->
+      <div class="page" id="page-documents">
+        <div class="sec-title">📄 Document Generator</div>
+        <div class="card">
+          <div class="card-body" style="padding-bottom:0;">
+            <div class="doc-tabs">
+              <button class="doc-tab active" onclick="showDocTab('filing',this)"> Case Filing</button>
+              <button class="doc-tab" onclick="showDocTab('summons',this)"> Summons</button>
+              <button class="doc-tab" onclick="showDocTab('notices',this)"> Notices</button>
+              <button class="doc-tab" onclick="showDocTab('settlement',this)"> Settlement</button>
+              <button class="doc-tab" onclick="showDocTab('cfa',this)"> CFA</button>
+              <button class="doc-tab" onclick="showDocTab('failedappear',this)"> Failed to Appear</button>
+              <button class="doc-tab" onclick="showDocTab('arbexec',this)"> Arbitration &amp; Execution</button>
+              <button class="doc-tab" onclick="showDocTab('appointments',this)"> Appointments</button>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <!-- ── CASE FILING (Forms 7, 8) ── -->
+            <div class="doc-tab-pane active" id="dtab-filing">
+              <div class="grid2" style="gap:24px;">
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 7 — Complaint</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid2">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="cs-case"></select></div>
+                      <div class="fg"><label>Sheet Date</label><input type="date" id="cs-date"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printComplaintSheet()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 8 — Notice of Hearing
+                    (Mediation)</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid2">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f8-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f8-date"></div>
+                      <div class="fg"><label>Hearing Date</label><input type="date" id="f8-hdate"></div>
+                      <div class="fg"><label>Hearing Time</label><input type="time" id="f8-htime"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticeHearingMed()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ── SUMMONS (Form 9) ── -->
+            <div class="doc-tab-pane" id="dtab-summons">
+              <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 9 — Summons (Punong
+                Barangay)</div>
+              <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                <div class="grid3">
+                  <div class="fg"><label>Select Case <span class="req">*</span></label><select id="sum-case"></select>
+                  </div>
+                  <div class="fg"><label>Issue Date</label><input type="date" id="sum-date"></div>
+                  <div class="fg"><label>Summon To</label>
+                    <select id="sum-to">
+                      <option value="respondent">Respondent Only</option>
+                      <option value="complainant">Complainant Only</option>
+                      <option value="both">Both Parties</option>
+                    </select>
+                  </div>
+                  <div class="fg"><label>Hearing Date</label><input type="date" id="sum-hdate"></div>
+                  <div class="fg"><label>Hearing Time</label><input type="time" id="sum-htime"></div>
+                  <div class="fg"><label>Venue</label><input id="sum-venue" placeholder="e.g. Barangay Hall"></div>
+                </div>
+                <div class="btn-row"><button class="btn btn-navy" onclick="printSummons()">🖨️ Generate Summons</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── NOTICES (Forms 10, 11, 12, 13) ── -->
+            <div class="doc-tab-pane" id="dtab-notices">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 10 — Notice for
+                    Constitution of Pangkat</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f10-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f10-date"></div>
+                      <div class="fg"><label>Meeting Date</label><input type="date" id="f10-hdate"></div>
+                      <div class="fg"><label>Meeting Time</label><input type="time" id="f10-htime"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticePangkat()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 11 — Notice to Chosen
+                    Pangkat Member</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f11-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f11-date"></div>
+                      <div class="fg"><label>Member Name <span class="req">*</span></label><input id="f11-member"
+                          placeholder="Full name of chosen member"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticePangkatMember()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 12 — Notice of
+                    Hearing (Conciliation / Pangkat)</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f12-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f12-date"></div>
+                      <div class="fg"><label>Hearing Date</label><input type="date" id="f12-hdate"></div>
+                      <div class="fg"><label>Hearing Time</label><input type="time" id="f12-htime"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticeHearingCon()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 13 — Subpoena</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f13-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f13-date"></div>
+                      <div class="fg"><label>Issued By</label>
+                        <select id="f13-issuer">
+                          <option value="pb">Punong Barangay</option>
+                          <option value="pangkat">Pangkat Chairman</option>
+                        </select>
+                      </div>
+                      <div class="fg"><label>Witness 1 <span class="req">*</span></label><input id="f13-w1"
+                          placeholder="Full name"></div>
+                      <div class="fg"><label>Witness 2 (optional)</label><input id="f13-w2" placeholder="Full name">
+                      </div>
+                      <div class="fg"><label>Appearance Date</label><input type="date" id="f13-hdate"></div>
+                      <div class="fg"><label>Appearance Time</label><input type="time" id="f13-htime"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printSubpoena()">🖨️ Generate</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ── SETTLEMENT (Forms 16, 17) ── -->
+            <div class="doc-tab-pane" id="dtab-settlement">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 16 — Amicable
+                    Settlement</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid2">
+                      <div class="fg"><label>Select Settlement Record <span class="req">*</span></label><select
+                          id="cert-settle"></select></div>
+                      <div class="fg"><label>Certificate Date</label><input type="date" id="cert-date"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printCertificate()">🖨️ Generate</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 17 — Repudiation
+                  </div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f17-case"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f17-date"></div>
+                      <div class="fg"><label>Ground</label>
+                        <select id="f17-ground">
+                          <option value="Fraud">Fraud</option>
+                          <option value="Violence">Violence</option>
+                          <option value="Intimidation">Intimidation</option>
+                        </select>
+                      </div>
+                      <div class="fg"><label>Filed By</label>
+                        <select id="f17-who">
+                          <option value="complainant">Complainant</option>
+                          <option value="respondent">Respondent</option>
+                        </select>
+                      </div>
+                      <div class="fg"><label>Punong Barangay</label><input id="f17-pb" placeholder="Name"></div>
+                      <div class="fg full"><label>Details of Ground</label><input id="f17-detail"
+                          placeholder="Describe the fraud/violence/intimidation"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printRepudiation()">🖨️ Generate</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ── CFA (Forms 20, 20-A, 20-B) ── -->
+            <div class="doc-tab-pane" id="dtab-cfa">
+              <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 20 / 20-A / 20-B —
+                Certification to File Action (CFA)</div>
+              <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                <div class="grid3">
+                  <div class="fg"><label>Select Case <span class="req">*</span></label><select id="cfa-case"></select>
+                  </div>
+                  <div class="fg"><label>CFA Date</label><input type="date" id="cfa-date"></div>
+                  <div class="fg"><label>Reason for CFA</label>
+                    <select id="cfa-reason">
+                      <option>Failure to settle after mediation</option>
+                      <option>Repudiation of settlement</option>
+                      <option>Failure to appear after two (2) summons</option>
+                      <option>Waiver of the right to lupon conciliation</option>
+                      <option>Case not covered by lupon jurisdiction</option>
+                    </select>
+                  </div>
+                  <div class="fg"><label>Lupon / Pangkat Secretary</label><input id="cfa-secretary" placeholder="Name">
+                  </div>
+                  <div class="fg"><label>Lupon / Pangkat Chairman</label><input id="cfa-captain" placeholder="Name">
+                  </div>
+                </div>
+                <div class="btn-row"><button class="btn btn-navy" onclick="printCFA()">🖨️ Generate CFA</button></div>
+              </div>
+            </div>
+
+            <!-- ── FAILED TO APPEAR (Forms 18, 19, 21, 22) ── -->
+            <div class="doc-tab-pane" id="dtab-failedappear">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 18 — Notice of
+                    Hearing: Complainant Failed to Appear</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f18-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f18-date"></div>
+                      <div class="fg"><label>Missed Hearing Date</label><input type="date" id="f18-missed"></div>
+                      <div class="fg"><label>New Hearing Date</label><input type="date" id="f18-hdate"></div>
+                      <div class="fg"><label>New Hearing Time</label><input type="time" id="f18-htime"></div>
+                      <div class="fg"><label>Punong Barangay / Pangkat Chairman</label><input id="f18-pb"
+                          placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printFailedAppearComp()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 19 — Notice of
+                    Hearing: Respondent Failed to Appear</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f19-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f19-date"></div>
+                      <div class="fg"><label>Missed Hearing Date</label><input type="date" id="f19-missed"></div>
+                      <div class="fg"><label>New Hearing Date</label><input type="date" id="f19-hdate"></div>
+                      <div class="fg"><label>New Hearing Time</label><input type="time" id="f19-htime"></div>
+                      <div class="fg"><label>Punong Barangay / Pangkat Chairman</label><input id="f19-pb"
+                          placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printFailedAppearResp()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 21 — Certification to
+                    Bar Action (Complainant)</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f21-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f21-date"></div>
+                      <div class="fg"><label>Order Date</label><input type="date" id="f21-order"></div>
+                      <div class="fg"><label>Lupon / Pangkat Secretary</label><input id="f21-sec" placeholder="Name">
+                      </div>
+                      <div class="fg"><label>Lupon / Pangkat Chairman</label><input id="f21-chair" placeholder="Name">
+                      </div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printBarAction()">🖨️ Generate</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 22 — Certification to
+                    Bar Counterclaim (Respondent)</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f22-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f22-date"></div>
+                      <div class="fg"><label>Lupon / Pangkat Secretary</label><input id="f22-sec" placeholder="Name">
+                      </div>
+                      <div class="fg"><label>Lupon / Pangkat Chairman</label><input id="f22-chair" placeholder="Name">
+                      </div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printBarCounterclaim()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ── ARBITRATION & EXECUTION (Forms 14, 15, 23, 24, 25) ── -->
+            <div class="doc-tab-pane" id="dtab-arbexec">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 14 — Agreement for
+                    Arbitration</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f14-case"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f14-date"></div>
+                      <div class="fg"><label>Arbitrated By</label>
+                        <select id="f14-type">
+                          <option value="Punong Barangay">Punong Barangay</option>
+                          <option value="Pangkat ng Tagapagkasundo">Pangkat ng Tagapagkasundo</option>
+                        </select>
+                      </div>
+                      <div class="fg"><label>Chairperson Name</label><input id="f14-chair" placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printArbitrationAgreement()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 15 — Arbitration
+                    Award</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f15-case"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f15-date"></div>
+                      <div class="fg"><label>Chairperson / Punong Barangay</label><input id="f15-chair"
+                          placeholder="Name"></div>
+                      <div class="fg"><label>Member 1</label><input id="f15-m1" placeholder="Name"></div>
+                      <div class="fg"><label>Member 2</label><input id="f15-m2" placeholder="Name"></div>
+                      <div class="fg"><label>Attested By</label>
+                        <select id="f15-attest-by">
+                          <option value="secretary">Punong Barangay / Lupon Secretary</option>
+                          <option value="chairman">Lupon Chairman</option>
+                        </select>
+                      </div>
+                      <div class="fg"><label>Attested Name</label><input id="f15-attested" placeholder="Name"></div>
+                    </div>
+                    <div class="fg" style="margin-top:10px;"><label>Award Text <span
+                          class="req">*</span></label><textarea id="f15-award" style="min-height:80px;"
+                        placeholder="State the award..."></textarea></div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printArbitrationAward()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 23 — Motion for
+                    Execution</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f23-case"></select></div>
+                      <div class="fg"><label>Date of Motion</label><input type="date" id="f23-date"></div>
+                      <div class="fg"><label>Date Settlement was Signed</label><input type="date" id="f23-settle"></div>
+                      <div class="fg"><label>Filed By</label>
+                        <select id="f23-filer">
+                          <option value="complainant">Complainant</option>
+                          <option value="respondent">Respondent</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printMotionExecution()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 24 — Notice of
+                    Hearing (Motion for Execution)</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f24-case"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f24-date"></div>
+                      <div class="fg"><label>Hearing Date</label><input type="date" id="f24-hdate"></div>
+                      <div class="fg"><label>Hearing Time</label><input type="time" id="f24-htime"></div>
+                      <div class="fg"><label>Motion Filed By</label><input id="f24-filer"
+                          placeholder="Name of complainant or respondent"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticeExecution()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 25 — Notice of
+                    Execution</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Case <span class="req">*</span></label><select
+                          id="f25-case"></select></div>
+                      <div class="fg"><label>Select Settlement (optional)</label><select id="f25-settle"></select></div>
+                      <div class="fg"><label>Issue Date</label><input type="date" id="f25-date"></div>
+                      <div class="fg"><label>Date Settlement was Signed</label><input type="date" id="f25-sdate"></div>
+                      <div class="fg"><label>Execution Date</label><input type="date" id="f25-execdate"></div>
+                      <div class="fg"><label>Execution Time</label><input type="time" id="f25-exectime"></div>
+                      <div class="fg"><label>Venue</label><input id="f25-venue" placeholder="e.g. Barangay Hall"></div>
+                    </div>
+                    <div class="fg" style="margin-top:10px;"><label>Terms of Settlement (if not linked
+                        above)</label><textarea id="f25-terms" style="min-height:60px;"
+                        placeholder="Enter settlement terms..."></textarea></div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticeOfExecution()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ── APPOINTMENTS (Forms 1, 2, 3, 4, 5, 6) ── -->
+            <div class="doc-tab-pane" id="dtab-appointments">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 1 — Notice to
+                    Constitute the Lupon</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Date</label><input type="date" id="f1-date"></div>
+                      <div class="fg"><label>Deadline for Objections</label><input type="date" id="f1-deadline"></div>
+                      <div class="fg"><label>Punong Barangay</label><input id="f1-pb" placeholder="Name"></div>
+                    </div>
+                    <div
+                      style="margin-top:12px;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#0d2137;margin-bottom:8px;">
+                      Nominees (up to 25)
+                    </div>
+                    <div class="grid3">
+                      <div class="fg"><label>Nominee 1</label><input id="f1-n1" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 2</label><input id="f1-n2" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 3</label><input id="f1-n3" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 4</label><input id="f1-n4" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 5</label><input id="f1-n5" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 6</label><input id="f1-n6" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 7</label><input id="f1-n7" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 8</label><input id="f1-n8" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 9</label><input id="f1-n9" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 10</label><input id="f1-n10" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 11</label><input id="f1-n11" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 12</label><input id="f1-n12" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 13</label><input id="f1-n13" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 14</label><input id="f1-n14" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 15</label><input id="f1-n15" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 16</label><input id="f1-n16" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 17</label><input id="f1-n17" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 18</label><input id="f1-n18" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 19</label><input id="f1-n19" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 20</label><input id="f1-n20" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 21</label><input id="f1-n21" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 22</label><input id="f1-n22" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 23</label><input id="f1-n23" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 24</label><input id="f1-n24" placeholder="Name"></div>
+                      <div class="fg"><label>Nominee 25</label><input id="f1-n25" placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticeConstitute()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 4 — List of Appointed
+                    Lupon Members</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <p style="font-size:.88rem;color:#555;margin-bottom:12px;">
+                      Automatically pulls names from your saved Lupon Members list (up to 20).
+                      Add members in the <strong>Lupon Members</strong> tab first.
+                    </p>
+                    <div class="grid2">
+                      <div class="fg"><label>Punong Barangay</label><input id="f4-pb" placeholder="Name"></div>
+                      <div class="fg"><label>Barangay / Lupon Secretary</label><input id="f4-sec" placeholder="Name">
+                      </div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printListLuponMembers()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 2 — Appointment of
+                    Lupon Member</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Member <span class="req">*</span></label><select
+                          id="f2-member"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f2-date"></div>
+                      <div class="fg"><label>Punong Barangay</label><input id="f2-pb" placeholder="Name"></div>
+                      <div class="fg"><label>Barangay Secretary</label><input id="f2-sec" placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printAppointment()">🖨️ Generate</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 3 — Notice of
+                    Appointment (Secretary to Member)</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Member <span class="req">*</span></label><select
+                          id="f3-member"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f3-date"></div>
+                      <div class="fg"><label>Oath Date</label><input type="date" id="f3-oath"></div>
+                      <div class="fg"><label>Barangay Secretary</label><input id="f3-sec" placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printNoticeAppointment()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 5 — Oath of Office
+                  </div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Member <span class="req">*</span></label><select
+                          id="f5-member"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f5-date"></div>
+                      <div class="fg"><label>Punong Barangay</label><input id="f5-pb" placeholder="Name"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printOathOfOffice()">🖨️
+                        Generate</button></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card-header" style="border-radius:8px 8px 0 0;margin-bottom:0;">Form 6 — Withdrawal of
+                    Appointment</div>
+                  <div style="border:1px solid #d4c5a0;border-top:none;border-radius:0 0 8px 8px;padding:14px;">
+                    <div class="grid3">
+                      <div class="fg"><label>Select Member <span class="req">*</span></label><select
+                          id="f6-member"></select></div>
+                      <div class="fg"><label>Date</label><input type="date" id="f6-date"></div>
+                      <div class="fg"><label>Ground</label>
+                        <select id="f6-ground">
+                          <option value="incapacity">Incapacity</option>
+                          <option value="unsuitability">Unsuitability</option>
+                        </select>
+                      </div>
+                      <div class="fg"><label>Punong Barangay / Chairman</label><input id="f6-pb" placeholder="Name">
+                      </div>
+                      <div class="fg full"><label>Details</label><input id="f6-detail"
+                          placeholder="Describe the ground for withdrawal"></div>
+                    </div>
+                    <div class="btn-row"><button class="btn btn-navy" onclick="printWithdrawal()">🖨️ Generate</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- /card-body -->
+        </div><!-- /card -->
+      </div><!-- /documents -->
+
+
+      <!-- ════ LUPON MEMBERS ════ -->
+      <div class="page" id="page-lupons">
+        <div class="sec-title">👥 Lupon Members</div>
+
+        <div class="card">
+          <div class="card-header">➕ Add Member</div>
+          <div class="card-body">
+            <div class="grid3">
+              <div class="fg">
+                <label>Full Name <span class="req">*</span></label>
+                <input id="lm-name" placeholder="Full name" oninput="this.value=this.value.replace(/[^a-zA-Z\s\-\.]/g,'')">
+              </div>
+              <div class="fg">
+                <label>Position</label>
+                <select id="lm-role">
+                  <option>Punong Barangay (Chairperson)</option>
+                  <option>Lupon Secretary</option>
+                  <option>Lupon Clerk</option>
+                  <option>Lupon Member</option>
+                  <option>Pangkat Chairperson</option>
+                  <option>Pangkat Member</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Contact</label>
+                <input id="lm-tel" placeholder="09XXXXXXXXX" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+              </div>
+              <div class="fg">
+                <label>Date Appointed</label>
+                <input type="date" id="lm-date">
+              </div>
+              <div class="fg">
+                <label>Term Expiry</label>
+                <input type="date" id="lm-exp">
+              </div>
+              <div class="fg">
+                <label>Status</label>
+                <select id="lm-status">
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-navy" onclick="addMember()">👤 Add Member</button>
+              <button class="btn btn-gold btn-sm" onclick="printMembers()">🖨️ Print List</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">📋 Current Lupon Members</div>
+          <div class="card-body">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Contact</th>
+                    <th>Appointed</th>
+                    <th>Expiry</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="members-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /lupons -->
+
+
+      <!-- ════ BACKUP & RESTORE ════ -->
+      <div class="page" id="page-backup">
+        <div class="sec-title">💾 Backup &amp; Restore</div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-header">📤 Export Backup</div>
+            <div class="card-body">
+              <p class="help-text">
+                Save all your data (cases, hearings, settlements, members) to a
+                <code>.json</code> file. Keep this file safe — it is your complete backup.
+              </p>
+              <div class="info-box" id="backup-summary">
+                Loading data summary...
+              </div>
+              <button class="btn btn-navy btn-block" onclick="exportBackup()">
+                💾 Export All Data (.json)
+              </button>
+              <p class="hint-text">
+                Recommended: Backup every Friday.<br>
+                Name files like: <i>Lupon-Backup-2026-03-18.json</i>
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">📥 Import / Restore Backup</div>
+            <div class="card-body">
+              <p class="help-text">
+                Restore from a previously exported <code>.json</code> backup file.
+                <b class="danger-text">Warning: This will overwrite all current data.</b>
+              </p>
+              <div class="backup-zone" onclick="document.getElementById('restore-file').click()">
+                📂 Click here to select a <code>.json</code> backup file
+              </div>
+              <input type="file" id="restore-file" accept=".json" style="display:none;"
+                onchange="previewRestore(event)">
+
+              <div id="restore-preview" style="display:none;" class="info-box">
+                <b>📋 File loaded:</b> <span id="restore-fname"></span><br>
+                <span id="restore-details"></span>
+              </div>
+
+              <button class="btn btn-navy" onclick="confirmRestore()">Merge into Current Data</button>
+
+              <!-- <button id="restore-btn" class="btn btn-danger btn-block" onclick="confirmRestore()"
+                style="display:none;">
+                ⚠️ Confirm &amp; Restore -->
+              </button>
+              <p class="hint-text">
+                Only <code>.json</code> files exported from this system are supported.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header danger-header">⚠️ Danger Zone</div>
+          <div class="card-body">
+            <p class="help-text" style="margin-bottom:14px;">
+              Permanently delete all data from this system. This cannot be undone.
+              Export a backup first before proceeding.
+            </p>
+            <button class="btn btn-danger" onclick="clearAllData()">
+              🗑️ Clear All Data
+            </button>
+          </div>
+        </div>
+      </div><!-- /backup -->
+
+    </div><!-- /container -->
+  </div><!-- /app -->
+
+
+  <!-- ════════════════════════════════════
+       VIEW CASE MODAL
+  ════════════════════════════════════ -->
+  <div class="modal-ov" id="view-modal">
+    <div class="modal">
+      <div class="modal-hdr">
+        <span>📋 Case Details</span>
+        <button class="modal-x" onclick="closeModal('view-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="view-modal-body"></div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════
+       SCRIPTS (order matters)
+  ════════════════════════════════════ -->
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/documents.js"></script>
+  <script src="js/cases.js"></script>
+  <script src="js/hearings.js"></script>
+  <script src="js/settlement.js"></script>
+  <script src="js/members.js"></script>
+  <script src="js/tracer.js"></script>
+  <script src="js/backup.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>

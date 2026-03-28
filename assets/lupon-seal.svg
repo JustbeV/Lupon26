@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 680 680">
+  <defs>
+    <style>
+      .seal-text { font-family: 'Segoe UI', Arial, sans-serif; fill: #C9A84C; font-weight: 700; }
+      .seal-sub  { font-family: 'Segoe UI', Arial, sans-serif; fill: #B8972E; font-weight: 600; font-size: 12px; }
+      .seal-inner{ font-family: 'Segoe UI', Arial, sans-serif; fill: #FDF8F0; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- outer dark bg -->
+  <circle cx="340" cy="340" r="295" fill="#0d2137"/>
+
+  <!-- ring borders -->
+  <circle cx="340" cy="340" r="293" fill="none" stroke="#C9A84C" stroke-width="5"/>
+  <circle cx="340" cy="340" r="282" fill="none" stroke="#8A6A1C" stroke-width="1"/>
+  <circle cx="340" cy="340" r="272" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+
+  <!-- dot ring -->
+  <circle cx="340" cy="52"  r="3.5" fill="#C9A84C"/>
+  <circle cx="397" cy="56"  r="3.5" fill="#C9A84C"/>
+  <circle cx="451" cy="68"  r="3.5" fill="#C9A84C"/>
+  <circle cx="500" cy="88"  r="3.5" fill="#C9A84C"/>
+  <circle cx="544" cy="116" r="3.5" fill="#C9A84C"/>
+  <circle cx="580" cy="151" r="3.5" fill="#C9A84C"/>
+  <circle cx="607" cy="191" r="3.5" fill="#C9A84C"/>
+  <circle cx="625" cy="236" r="3.5" fill="#C9A84C"/>
+  <circle cx="633" cy="284" r="3.5" fill="#C9A84C"/>
+  <circle cx="630" cy="332" r="3.5" fill="#C9A84C"/>
+  <circle cx="618" cy="378" r="3.5" fill="#C9A84C"/>
+  <circle cx="597" cy="421" r="3.5" fill="#C9A84C"/>
+  <circle cx="569" cy="460" r="3.5" fill="#C9A84C"/>
+  <circle cx="535" cy="494" r="3.5" fill="#C9A84C"/>
+  <circle cx="495" cy="519" r="3.5" fill="#C9A84C"/>
+  <circle cx="450" cy="536" r="3.5" fill="#C9A84C"/>
+  <circle cx="402" cy="543" r="3.5" fill="#C9A84C"/>
+  <circle cx="353" cy="541" r="3.5" fill="#C9A84C"/>
+  <circle cx="305" cy="530" r="3.5" fill="#C9A84C"/>
+  <circle cx="259" cy="511" r="3.5" fill="#C9A84C"/>
+  <circle cx="218" cy="484" r="3.5" fill="#C9A84C"/>
+  <circle cx="183" cy="451" r="3.5" fill="#C9A84C"/>
+  <circle cx="154" cy="413" r="3.5" fill="#C9A84C"/>
+  <circle cx="133" cy="370" r="3.5" fill="#C9A84C"/>
+  <circle cx="120" cy="324" r="3.5" fill="#C9A84C"/>
+  <circle cx="117" cy="277" r="3.5" fill="#C9A84C"/>
+  <circle cx="122" cy="230" r="3.5" fill="#C9A84C"/>
+  <circle cx="137" cy="185" r="3.5" fill="#C9A84C"/>
+  <circle cx="160" cy="144" r="3.5" fill="#C9A84C"/>
+  <circle cx="191" cy="108" r="3.5" fill="#C9A84C"/>
+  <circle cx="228" cy="79"  r="3.5" fill="#C9A84C"/>
+  <circle cx="283" cy="58"  r="3.5" fill="#C9A84C"/>
+
+  <!-- curved text arcs -->
+  <path id="topArc" fill="none" d="M 96,340 A 244,244 0 0,1 584,340"/>
+  <text class="seal-text" font-size="22" letter-spacing="5.5">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">LUPON NG TAGAPAMAYAPA</textPath>
+  </text>
+  <path id="botArc" fill="none" d="M 112,374 A 244,244 0 0,0 568,374"/>
+  <text class="seal-sub" font-size="13" letter-spacing="3.5">
+    <textPath href="#botArc" startOffset="50%" text-anchor="middle">REPUBLIKA NG PILIPINAS</textPath>
+  </text>
+
+  <!-- inner divider rings -->
+  <circle cx="340" cy="340" r="204" fill="none" stroke="#C9A84C" stroke-width="2"/>
+  <circle cx="340" cy="340" r="198" fill="none" stroke="#8A6A1C" stroke-width="0.5"/>
+
+  <!-- stars on divider -->
+  <polygon points="340,136 344,148 356,148 347,155 351,167 340,160 329,167 333,155 324,148 336,148" fill="#C9A84C"/>
+  <polygon points="340,544 344,532 356,532 347,525 351,513 340,520 329,513 333,525 324,532 336,532" fill="#C9A84C"/>
+  <polygon points="136,340 148,336 148,324 155,333 167,329 160,340 167,351 155,347 148,356 148,344" fill="#C9A84C"/>
+  <polygon points="544,340 532,336 532,324 525,333 513,329 520,340 513,351 525,347 532,356 532,344" fill="#C9A84C"/>
+
+  <!-- LAUREL LEFT -->
+  <g fill="#C9A84C" opacity="0.88">
+    <ellipse cx="215" cy="272" rx="19" ry="9.5" transform="rotate(-58 215 272)"/>
+    <ellipse cx="200" cy="296" rx="18" ry="9"   transform="rotate(-42 200 296)"/>
+    <ellipse cx="192" cy="321" rx="18" ry="9"   transform="rotate(-26 192 321)"/>
+    <ellipse cx="190" cy="347" rx="18" ry="9"   transform="rotate(-8  190 347)"/>
+    <ellipse cx="195" cy="373" rx="18" ry="9"   transform="rotate( 8  195 373)"/>
+    <ellipse cx="207" cy="397" rx="18" ry="9"   transform="rotate(22  207 397)"/>
+    <ellipse cx="224" cy="418" rx="18" ry="9"   transform="rotate(38  224 418)"/>
+    <path d="M 232,435 Q 208,382 204,330 Q 200,278 224,255" fill="none" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- LAUREL RIGHT -->
+  <g fill="#C9A84C" opacity="0.88">
+    <ellipse cx="465" cy="272" rx="19" ry="9.5" transform="rotate( 58 465 272)"/>
+    <ellipse cx="480" cy="296" rx="18" ry="9"   transform="rotate( 42 480 296)"/>
+    <ellipse cx="488" cy="321" rx="18" ry="9"   transform="rotate( 26 488 321)"/>
+    <ellipse cx="490" cy="347" rx="18" ry="9"   transform="rotate(  8 490 347)"/>
+    <ellipse cx="485" cy="373" rx="18" ry="9"   transform="rotate( -8 485 373)"/>
+    <ellipse cx="473" cy="397" rx="18" ry="9"   transform="rotate(-22 473 397)"/>
+    <ellipse cx="456" cy="418" rx="18" ry="9"   transform="rotate(-38 456 418)"/>
+    <path d="M 448,435 Q 472,382 476,330 Q 480,278 456,255" fill="none" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- BALANCE OF JUSTICE SCALE -->
+  <!-- center pole -->
+  <rect x="336" y="235" width="8" height="136" rx="4" fill="#C9A84C"/>
+  <!-- crossbeam -->
+  <rect x="252" y="250" width="176" height="8" rx="4" fill="#C9A84C"/>
+  <!-- pivot -->
+  <circle cx="340" cy="249" r="12" fill="#C9A84C"/>
+  <circle cx="340" cy="249" r="6"  fill="#0d2137"/>
+
+  <!-- left chains & pan -->
+  <line x1="267" y1="258" x2="262" y2="295" stroke="#C9A84C" stroke-width="2.2"/>
+  <line x1="277" y1="258" x2="284" y2="295" stroke="#C9A84C" stroke-width="2.2"/>
+  <ellipse cx="273" cy="299" rx="24" ry="8" fill="#C9A84C"/>
+  <path d="M 249,299 Q 273,322 297,299" fill="#C9A84C" opacity="0.45"/>
+
+  <!-- right chains & pan -->
+  <line x1="403" y1="258" x2="396" y2="295" stroke="#C9A84C" stroke-width="2.2"/>
+  <line x1="413" y1="258" x2="418" y2="295" stroke="#C9A84C" stroke-width="2.2"/>
+  <ellipse cx="407" cy="299" rx="24" ry="8" fill="#C9A84C"/>
+  <path d="M 383,299 Q 407,322 431,299" fill="#C9A84C" opacity="0.45"/>
+
+  <!-- base triangle + platform -->
+  <polygon points="322,370 358,370 352,380 328,380" fill="#C9A84C"/>
+  <rect x="310" y="379" width="60" height="7" rx="3" fill="#C9A84C"/>
+
+  <!-- BARANGAY NAME TEXT block -->
+  <text class="seal-inner" x="340" y="420" text-anchor="middle" font-size="16" fill="#FDF8F0">YOUR BARANGAY</text>
+  <text class="seal-inner" x="340" y="440" text-anchor="middle" font-size="12" fill="#C9A84C">General Santos City</text>
+
+  <!-- decorative line dividers -->
+  <line x1="246" y1="428" x2="310" y2="428" stroke="#C9A84C" stroke-width="1" opacity="0.55"/>
+  <line x1="370" y1="428" x2="434" y2="428" stroke="#C9A84C" stroke-width="1" opacity="0.55"/>
+  <line x1="255" y1="447" x2="425" y2="447" stroke="#C9A84C" stroke-width="0.5" opacity="0.35"/>
+</svg>

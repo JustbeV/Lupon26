@@ -1,0 +1,3 @@
+Save your exported backup (.json) files in this folder.
+
+Use the Backup tab inside the system to export and restore your data.
