@@ -14,9 +14,9 @@
 /** Pre-fill the auto-generated case number and today's date. */
 function initCaseForm() {
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('f-no').value    = genCaseNo();
-  document.getElementById('f-date').value  = today;
-  document.getElementById('f-date').max    = today;  // prevent future dates
+  document.getElementById('f-no').value = genCaseNo();
+  document.getElementById('f-date').value = today;
+  document.getElementById('f-date').max = today;  // prevent future dates
 
   // Populate pangkat multi-select from active Lupon members
   const sel = document.getElementById('f-pangkat');
@@ -52,10 +52,10 @@ function clearCaseForm() {
 /** Validate and save a new case record. */
 function saveCase() {
   const nature = document.getElementById('f-nature').value;
-  const fcl    = document.getElementById('fc-last').value.trim();
-  const fcf    = document.getElementById('fc-first').value.trim();
-  const frl    = document.getElementById('fr-last').value.trim();
-  const frf    = document.getElementById('fr-first').value.trim();
+  const fcl = document.getElementById('fc-last').value.trim();
+  const fcf = document.getElementById('fc-first').value.trim();
+  const frl = document.getElementById('fr-last').value.trim();
+  const frf = document.getElementById('fr-first').value.trim();
 
   if (!nature || !fcl || !fcf || !frl || !frf) {
     toast('Fill in all required fields.', '#b22222');
@@ -75,36 +75,36 @@ function saveCase() {
   }
 
   const c = {
-    id:       Date.now(),
-    caseNo:   document.getElementById('f-no').value,
+    id: Date.now(),
+    caseNo: document.getElementById('f-no').value,
     dateFiled: document.getElementById('f-date').value,
     nature,
-    status:   document.getElementById('f-status').value,
+    status: document.getElementById('f-status').value,
     pangkat: [...document.getElementById('f-pangkat').selectedOptions]
-           .map(o => o.value).join(', '),
-    docket:   document.getElementById('f-docket').value,
-    desc:     document.getElementById('f-desc').value,
-    relief:   document.getElementById('f-relief').value,
+      .map(o => o.value).join(', '),
+    docket: document.getElementById('f-docket').value,
+    desc: document.getElementById('f-desc').value,
+    relief: document.getElementById('f-relief').value,
     comp: {
-      last:  fcl,
+      last: fcl,
       first: fcf,
-      mid:   document.getElementById('fc-mid').value,
-      age:   document.getElementById('fc-age').value,
-      addr:  document.getElementById('fc-addr').value,
-      tel:   document.getElementById('fc-tel').value.replace(/[^0-9]/g, '').slice(0, 11),
+      mid: document.getElementById('fc-mid').value,
+      age: document.getElementById('fc-age').value,
+      addr: document.getElementById('fc-addr').value,
+      tel: document.getElementById('fc-tel').value.replace(/[^0-9]/g, '').slice(0, 11),
       civil: document.getElementById('fc-civil').value
     },
     resp: {
-      last:  frl,
+      last: frl,
       first: frf,
-      mid:   document.getElementById('fr-mid').value,
-      age:   document.getElementById('fr-age').value,
-      addr:  document.getElementById('fr-addr').value,
-      tel:   document.getElementById('fr-tel').value.replace(/[^0-9]/g, '').slice(0, 11),
+      mid: document.getElementById('fr-mid').value,
+      age: document.getElementById('fr-age').value,
+      addr: document.getElementById('fr-addr').value,
+      tel: document.getElementById('fr-tel').value.replace(/[^0-9]/g, '').slice(0, 11),
       civil: document.getElementById('fr-civil').value
     },
-    hdate:  document.getElementById('f-hdate').value,
-    htime:  document.getElementById('f-htime').value,
+    hdate: document.getElementById('f-hdate').value,
+    htime: document.getElementById('f-htime').value,
     hvenue: document.getElementById('f-hvenue').value
   };
 
@@ -113,15 +113,15 @@ function saveCase() {
   // Auto-create the first hearing record if a date was provided
   if (c.hdate) {
     hearings.push({
-      id:       Date.now() + 1,
-      caseId:   c.id,
-      caseNo:   c.caseNo,
-      date:     c.hdate,
-      time:     c.htime,
-      venue:    c.hvenue,
-      type:     'First Hearing',
+      id: Date.now() + 1,
+      caseId: c.id,
+      caseNo: c.caseNo,
+      date: c.hdate,
+      time: c.htime,
+      venue: c.hvenue,
+      type: 'First Hearing',
       mediator: c.pangkat,
-      notes:    ''
+      notes: ''
     });
   }
 
@@ -134,10 +134,10 @@ function saveCase() {
 function previewCase() {
   // Run the same validation as saveCase without saving yet
   const nature = document.getElementById('f-nature').value;
-  const fcl    = document.getElementById('fc-last').value.trim();
-  const fcf    = document.getElementById('fc-first').value.trim();
-  const frl    = document.getElementById('fr-last').value.trim();
-  const frf    = document.getElementById('fr-first').value.trim();
+  const fcl = document.getElementById('fc-last').value.trim();
+  const fcf = document.getElementById('fc-first').value.trim();
+  const frl = document.getElementById('fr-last').value.trim();
+  const frf = document.getElementById('fr-first').value.trim();
 
   if (!nature || !fcl || !fcf || !frl || !frf) {
     toast('Fill in all required fields.', '#b22222');
@@ -167,7 +167,7 @@ function previewCase() {
 
 /** Re-render the filtered cases table. */
 function renderCases() {
-  const q  = (document.getElementById('srch').value || '').toLowerCase();
+  const q = (document.getElementById('srch').value || '').toLowerCase();
   const fs = document.getElementById('flt-status').value;
 
   const filtered = cases.filter(c => {
@@ -198,6 +198,9 @@ function renderCases() {
       <td style="white-space:nowrap;">
         <button class="btn btn-sm btn-outline" title="View / Edit Status" onclick="viewCase(${c.id})">👁 View</button>
         <button class="btn btn-sm btn-gold"    title="Print"              onclick="printCase(${c.id})">🖨️</button>
+        <button onclick="exportComplaintDocx(${c.id})">
+  Export to Word (.docx)
+</button>
         <button class="btn btn-sm btn-danger"  title="Delete"             onclick="delCase(${c.id})">🗑️</button>
       </td>
     </tr>`).join('');
@@ -206,7 +209,7 @@ function renderCases() {
 /** Delete a case and all its related hearings. */
 function delCase(id) {
   if (!confirm('Delete this case and all related records?')) return;
-  cases    = cases.filter(c => c.id !== id);
+  cases = cases.filter(c => c.id !== id);
   hearings = hearings.filter(h => h.caseId !== id);
   persist();
   renderCases();
@@ -236,18 +239,18 @@ function viewCase(id) {
       <div style="background:#f9f6f0;border:1px solid #e8dfc8;border-radius:8px;padding:12px 14px;">
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
                     color:#c9a84c;margin-bottom:6px;">👤 Complainant</div>
-        <div style="font-weight:700;font-size:.95rem;">${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' '+c.comp.mid : ''}</div>
-        <div style="font-size:.82rem;color:#555;margin-top:3px;">Age ${c.comp.age||'—'} &nbsp;·&nbsp; ${c.comp.civil||'—'}</div>
-        <div style="font-size:.82rem;color:#555;">📍 ${c.comp.addr||'—'}</div>
-        <div style="font-size:.82rem;color:#555;">📞 ${c.comp.tel||'—'}</div>
+        <div style="font-weight:700;font-size:.95rem;">${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}</div>
+        <div style="font-size:.82rem;color:#555;margin-top:3px;">Age ${c.comp.age || '—'} &nbsp;·&nbsp; ${c.comp.civil || '—'}</div>
+        <div style="font-size:.82rem;color:#555;">📍 ${c.comp.addr || '—'}</div>
+        <div style="font-size:.82rem;color:#555;">📞 ${c.comp.tel || '—'}</div>
       </div>
       <div style="background:#f9f6f0;border:1px solid #e8dfc8;border-radius:8px;padding:12px 14px;">
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
                     color:#c9a84c;margin-bottom:6px;">👤 Respondent</div>
-        <div style="font-weight:700;font-size:.95rem;">${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' '+c.resp.mid : ''}</div>
-        <div style="font-size:.82rem;color:#555;margin-top:3px;">Age ${c.resp.age||'—'} &nbsp;·&nbsp; ${c.resp.civil||'—'}</div>
-        <div style="font-size:.82rem;color:#555;">📍 ${c.resp.addr||'—'}</div>
-        <div style="font-size:.82rem;color:#555;">📞 ${c.resp.tel||'—'}</div>
+        <div style="font-weight:700;font-size:.95rem;">${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' ' + c.resp.mid : ''}</div>
+        <div style="font-size:.82rem;color:#555;margin-top:3px;">Age ${c.resp.age || '—'} &nbsp;·&nbsp; ${c.resp.civil || '—'}</div>
+        <div style="font-size:.82rem;color:#555;">📍 ${c.resp.addr || '—'}</div>
+        <div style="font-size:.82rem;color:#555;">📞 ${c.resp.tel || '—'}</div>
       </div>
     </div>
 
@@ -265,12 +268,12 @@ function viewCase(id) {
       <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;
                   letter-spacing:.07em;color:#0d2137;margin-bottom:8px;">✏️ Update Status</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        ${['Pending','Active','Mediation','Settled','Dismissed','Escalated'].map(s => `
+        ${['Pending', 'Active', 'Mediation', 'Settled', 'Dismissed', 'Escalated'].map(s => `
           <button onclick="updateCaseStatus(${c.id},'${s}')"
-            style="padding:6px 14px;border-radius:20px;border:2px solid ${c.status===s?'#0d2137':'#ccc'};
-                   background:${c.status===s?'#0d2137':'#fff'};
-                   color:${c.status===s?'#fff':'#444'};
-                   font-size:.82rem;font-weight:${c.status===s?'700':'400'};cursor:pointer;">
+            style="padding:6px 14px;border-radius:20px;border:2px solid ${c.status === s ? '#0d2137' : '#ccc'};
+                   background:${c.status === s ? '#0d2137' : '#fff'};
+                   color:${c.status === s ? '#fff' : '#444'};
+                   font-size:.82rem;font-weight:${c.status === s ? '700' : '400'};cursor:pointer;">
             ${s}
           </button>`).join('')}
       </div>
@@ -307,7 +310,7 @@ function printCase(id) {
   const c = cases.find(x => x.id === id);
   if (!c) return;
 
-  const compName  = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
+  const compName = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
   const dateFiled = fmtDate(c.dateFiled);
 
   // Get the Punong Barangay name from members list
@@ -318,10 +321,10 @@ function printCase(id) {
   const _fd = c.dateFiled ? new Date(c.dateFiled + 'T00:00:00') : null;
   const _day = _fd ? _fd.getDate() : null;
   const _ordinal = _day
-    ? _day + (['th','st','nd','rd'][(_day%100>10&&_day%100<14)?0:(_day%10<4?_day%10:0)] || 'th')
+    ? _day + (['th', 'st', 'nd', 'rd'][(_day % 100 > 10 && _day % 100 < 14) ? 0 : (_day % 10 < 4 ? _day % 10 : 0)] || 'th')
     : '____';
   const _month = _fd ? _fd.toLocaleString('en-PH', { month: 'long' }) : '____________';
-  const _year  = _fd ? _fd.getFullYear() : '____';
+  const _year = _fd ? _fd.getFullYear() : '____';
   const { dayStr, monthStr, yearStr2 } = parseDateParts(c.dateFiled);
 
   showPrint(`
@@ -338,14 +341,14 @@ function printCase(id) {
         and interests in the following manner:
       </div>
 
-      <div style="margin:8px 0 16px;">${c.desc||'<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
+      <div style="margin:8px 0 16px;">${c.desc || '<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
 
       <div class="kp-body">
         THEREFORE, I/WE pray that the following relief/s be granted to me/us in accordance
         with law and/or equity:
       </div>
 
-      <div style="margin:8px 0 16px;">${c.relief||'<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
+      <div style="margin:8px 0 16px;">${c.relief || '<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
 
       <div class="kp-body" style="margin-top:10px;">
         Made this <strong>${_ordinal}</strong> day of <strong>${_month}</strong> ${_year}.
@@ -361,7 +364,9 @@ function printCase(id) {
 </div>
 
 <div style="margin-top:16px;">
-  <div style="font-size:11pt;">${pbName}</div>
+  <div style="font-size:11pt; text-decoration: underline;">
+  ${pbName}
+</div>
   <div style="font-size:11pt;">Punong Barangay</div>
 </div>
 
@@ -424,9 +429,9 @@ function exportWord() {
     </html>`;
 
   const blob = new Blob([html], { type: 'application/msword' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
   a.download = `Lupon-Cases-${cfg.brgy.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.doc`;
   a.click();
   URL.revokeObjectURL(url);

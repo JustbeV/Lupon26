@@ -62,18 +62,18 @@ function kpHeader() {
 }
 
 function kpCaption(c) {
-  const cn = `${c.comp.last}, ${c.comp.first}${c.comp.mid?' '+c.comp.mid:''}`;
-  const rn = `${c.resp.last}, ${c.resp.first}${c.resp.mid?' '+c.resp.mid:''}`;
+  const cn = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
+  const rn = `${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' ' + c.resp.mid : ''}`;
   return `
     <table style="width:100%;font-size:11pt;margin-bottom:4px;">
       <tr>
         <td style="width:55%;vertical-align:top;">
           <div>${cn}</div>
-          <div style="font-size:10pt;color:#333;">${c.comp.addr||''}</div>
+          <div style="font-size:10pt;color:#333;">${c.comp.addr || ''}</div>
           <div style="padding-left:20px;font-style:italic;">Complainant/s</div>
           <div style="text-align:center;font-style:italic;margin:6px 0;">-against-</div>
           <div>${rn}</div>
-          <div style="font-size:10pt;color:#333;">${c.resp.addr||''}</div>
+          <div style="font-size:10pt;color:#333;">${c.resp.addr || ''}</div>
           <div style="padding-left:20px;font-style:italic;">Respondent/s</div>
         </td>
         <td style="width:45%;vertical-align:top;padding-left:16px;font-size:11pt;">
@@ -156,9 +156,9 @@ function printComplaintSheet() {
     <div class="kp-title">C O M P L A I N T</div>
     <div class="kp-body">I/WE hereby complain against above named respondent/s for violating my/our rights and interests in the following manner:</div>
      
-    <div style="margin:8px 0 16px;">${c.desc||'<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
+    <div style="margin:8px 0 16px;">${c.desc || '<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
     <div class="kp-body">THEREFORE, I/WE pray that the following relief/s be granted to me/us in accordance with law and/or equity.</div>
-   <div style="margin:8px 0 16px;">${c.relief||'<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
+   <div style="margin:8px 0 16px;">${c.relief || '<div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div><div style="border-bottom:1px solid #000;margin-top:18px;"></div>'}</div>
     <div class="kp-body">Made this <span class="kp-line" style="min-width:160px;">${fmtDate(document.getElementById('cs-date').value)}</span>.</div>
     ${kpSingleSig(compName, 'Complainant/s')}
     <div class="kp-body" style="margin-top:36px;">Received and filed this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
@@ -231,7 +231,12 @@ function printSummons() {
   if (to === 'respondent' || to === 'both') html += oneSummons(c.resp);
   if (to === 'both') html += '<div style="page-break-before:always;"></div>';
   if (to === 'complainant' || to === 'both') html += oneSummons(c.comp);
-  kpShow(html, `Form9-Summons-${c.caseNo}`);
+  kpShow(
+  html + `<button onclick="exportSummonsDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
+    Export to Word (.docx)
+  </button>`,
+  `Form9-Summons-${c.caseNo}`
+);
 }
 
 /* ════ FORM 10 — NOTICE FOR CONSTITUTION OF PANGKAT ════ */
@@ -354,51 +359,66 @@ function printCertificate() {
   const s = settlements.find(x => x.id == sid);
   if (!s) { toast('Select a settlement.', '#b22222'); return; }
   const c = cases.find(x => x.caseNo === s.caseNo);
-  const cn = c ? `${c.comp.last}, ${c.comp.first}${c.comp.mid?' '+c.comp.mid:''}` : '______________________________';
-  const rn = c ? `${c.resp.last}, ${c.resp.first}${c.resp.mid?' '+c.resp.mid:''}` : '______________________________';
+  const cn = c ? `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}` : '______________________________';
+  const rn = c ? `${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' ' + c.resp.mid : ''}` : '______________________________';
 
-  const _d   = s.date ? new Date(s.date+'T00:00:00') : null;
+  const _d = s.date ? new Date(s.date + 'T00:00:00') : null;
   const _day = _d ? _d.getDate() : null;
-  const _ord = _day ? _day+(['th','st','nd','rd'][(_day%100>10&&_day%100<14)?0:(_day%10<4?_day%10:0)]||'th') : '______';
-  const _mon = _d ? _d.toLocaleString('en-PH',{month:'long'}) : '_________________';
-  const _yr  = _d ? _d.getFullYear() : '____';
+  const _ord = _day ? _day + (['th', 'st', 'nd', 'rd'][(_day % 100 > 10 && _day % 100 < 14) ? 0 : (_day % 10 < 4 ? _day % 10 : 0)] || 'th') : '______';
+  const _mon = _d ? _d.toLocaleString('en-PH', { month: 'long' }) : '_________________';
+  const _yr = _d ? _d.getFullYear() : '____';
 
-  kpShow(`<div class="kp-wrap">${kpHeader()}${c?kpCaption(c):''}
+  kpShow(`<div class="kp-wrap">${kpHeader()}<div style="margin-top:50px;"></div>${c ? kpCaption(c) : ''}
     <div class="kp-title">AMICABLE SETTLEMENT</div>
     <div class="kp-body" style="margin-top:10px;">We, complainant/s and respondent/s in the above-captioned case, do hereby agree to settle our dispute as follows:</div>
     <div style="margin:10px 0 16px;">
       ${s.terms
-        ? `<div style="font-size:12pt;line-height:1.8;">${s.terms}</div>`
-        : `<div style="border-bottom:1px solid #000;margin-top:20px;"></div>
+      ? `<div style="font-size:12pt;line-height:1.8;">${s.terms}</div>`
+      : `<div style="border-bottom:1px solid #000;margin-top:20px;"></div>
            <div style="border-bottom:1px solid #000;margin-top:20px;"></div>
            <div style="border-bottom:1px solid #000;margin-top:20px;"></div>
            <div style="border-bottom:1px solid #000;margin-top:20px;"></div>
            <div style="border-bottom:1px solid #000;margin-top:20px;"></div>
            <div style="border-bottom:1px solid #000;margin-top:20px;"></div>`
-      }
+    }
     </div>
     <div class="kp-body">And bind ourselves to comply honestly and faithfully with the above terms of settlement.</div>
     <div class="kp-body" style="margin-top:20px;">Entered this <strong>${_ord}</strong> day of <strong>${_mon}</strong>, ${_yr}</div>
-    <table style="width:100%;margin-top:40px;font-size:11pt;">
-      <tr>
-        <td style="width:50%;text-align:center;padding-right:20px;">
-          <div style="border-top:1px solid #000;padding-top:4px;">${cn}</div>
-          <div style="margin-top:2px;">Complainant/s</div>
-        </td>
-        <td style="width:50%;text-align:center;padding-left:20px;">
-          <div style="border-top:1px solid #000;padding-top:4px;">${rn}</div>
-          <div style="margin-top:2px;">Respondent/s</div>
-        </td>
-      </tr>
-    </table>
+   <table style="width:100%;margin-top:40px;font-size:11pt;">
+  <tr>
+    <td style="width:50%;text-align:center;padding-right:20px;">
+      <div style="display:inline-block;text-align:center;">
+        <div>${cn}</div>
+        <div style="border-top:1px solid #000;padding-top:4px;">
+          Complainant/s
+        </div>
+      </div>
+    </td>
+    <td style="width:50%;text-align:center;padding-left:20px;">
+      <div style="display:inline-block;text-align:center;">
+        <div>${rn}</div>
+        <div style="border-top:1px solid #000;padding-top:4px;">
+          Respondent/s
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
     <div style="margin-top:30px;font-size:12pt;font-weight:bold;">ATTESTATION:</div>
     <div class="kp-body" style="margin-top:8px;">I hereby certify that the foregoing amicable settlement was entered into by the parties freely and voluntarily, after I had explained to them the nature and consequence of such settlement.</div>
     <div style="margin-top:44px;text-align:center;">
-      <div style="border-top:1px solid #000;padding-top:4px;display:inline-block;min-width:260px;">${getPBName()}</div>
-      <div style="font-size:11pt;margin-top:4px;">Punong Barangay</div>
+  <div style="display:inline-block;text-align:center;">
+    <div style="padding:0 10px;">${getPBName()}</div>
+    <div style="font-size:11pt;margin-top:4px;border-top:1px solid #000;">
+      Punong Barangay
     </div>
+  </div>
+</div>
     <div class="kp-note">* Failure to repudiate the settlement within ten (10) days from date of settlement shall be deemed a waiver of the right to challenge on said grounds. (R.A. 7160, Sec. 416)</div>
-    ${printFooter()}</div>`, `Form16-AmicableSettlement-${s.caseNo}`);
+    ${printFooter()}</div>
+    <button onclick="exportAmicableSettlementDocx(${s.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
+      Export to Word (.docx)
+    </button>`, `Form16-AmicableSettlement-${s.caseNo}`);
 }
 
 function printSettlementById(id) {
@@ -500,7 +520,10 @@ function printCFA() {
     <div class="kp-body" style="margin-top:16px;">${kpDateLine(document.getElementById('cfa-date').value)}</div>
     ${kpSingleSig(sec, 'Pangkat Secretary / Lupon Secretary')}
     ${kpAttestedBy(cap, `Pangkat Chairman / Lupon Chairman<br>${cfg.brgy}`)}
-    ${printFooter()}</div>`, `${label}-CFA-${c.caseNo}`);
+    ${printFooter()}</div>
+    <button onclick="exportCFADocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
+      Export to Word (.docx)
+    </button>`, `${label}-CFA-${c.caseNo}`);
 }
 
 /* ════ FORM 21 — CERTIFICATION TO BAR ACTION ════ */
