@@ -181,7 +181,7 @@ function printNoticeHearingMed() {
     ${kpSingleSig('', 'Punong Barangay / Lupon Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
     <div style="margin-top:16px;font-size:11pt;font-weight:bold;">Complainant/s</div>
-    ${kpTwoSig('', '', '', '')}${printFooter()}</div>`, `Form8-NoticeHearingMed-${c.caseNo}`);
+    ${kpTwoSig('', '', '', '')}${printFooter()}</div><button onclick="exportNoticeHearingMedDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form8-NoticeHearingMed-${c.caseNo}`);
 }
 
 /* ════ FORM 9 — SUMMONS ════ */
@@ -254,7 +254,7 @@ function printNoticePangkat() {
     <div class="kp-body">${kpDateLine(document.getElementById('f10-date').value)}</div>
     ${kpSingleSig('', 'Punong Barangay')}
     <div class="kp-body" style="margin-top:30px;">Notified this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
-    ${kpTwoSig('', 'Complainant/s', '', 'Respondent/s')}${printFooter()}</div>`, `Form10-NoticePangkat-${c.caseNo}`);
+    ${kpTwoSig('', 'Complainant/s', '', 'Respondent/s')}${printFooter()}</div><button onclick="exportNoticePangkatDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form10-NoticePangkat-${c.caseNo}`);
 }
 
 /* ════ FORM 11 — NOTICE TO CHOSEN PANGKAT MEMBER ════ */
@@ -269,7 +269,7 @@ function printNoticePangkatMember() {
     <div class="kp-body" style="margin-top:14px;">Notice is hereby given that you have been chosen member of the Pangkat ng Tagapagkasundo to amicably conciliate the dispute between the parties in the above-entitled case.</div>
     ${kpSingleSig('', 'Punong Barangay / Lupon Secretary')}
     <div class="kp-body" style="margin-top:30px;">Received this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
-    ${kpSingleSig('', 'Pangkat Member')}${printFooter()}</div>`, `Form11-NoticePangkatMember-${c.caseNo}`);
+    ${kpSingleSig('', 'Pangkat Member')}${printFooter()}</div><button onclick="exportNoticePangkatMemberDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form11-NoticePangkatMember-${c.caseNo}`);
 }
 
 /* ════ FORM 12 — NOTICE OF HEARING (CONCILIATION) ════ */
@@ -287,7 +287,7 @@ function printNoticeHearingCon() {
     <div class="kp-body">${kpDateLine(document.getElementById('f12-date').value)}</div>
     ${kpSingleSig('', 'Pangkat Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
-    ${kpTwoSig('', 'Complainant/s', '', 'Respondent/s')}${printFooter()}</div>`, `Form12-NoticeHearingCon-${c.caseNo}`);
+    ${kpTwoSig('', 'Complainant/s', '', 'Respondent/s')}${printFooter()}</div><button onclick="exportNoticeHearingConDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form12-NoticeHearingCon-${c.caseNo}`);
 }
 
 /* ════ FORM 13 — SUBPOENA ════ */
@@ -476,7 +476,7 @@ function printFailedAppearComp() {
     ${kpSingleSig(pb, 'Punong Barangay / Pangkat Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
     <div style="margin-top:16px;font-size:11pt;font-weight:bold;">Complainant/s</div>
-    ${kpTwoSig('', '', '', '')}${printFooter()}</div>`, `Form18-FailedAppearComp-${c.caseNo}`);
+    ${kpTwoSig('', '', '', '')}${printFooter()}</div><button onclick="exportFailedAppearCompDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form18-FailedAppearComp-${c.caseNo}`);
 }
 
 /* ════ FORM 19 — NOTICE OF HEARING (RESPONDENT FAILED TO APPEAR) ════ */
@@ -496,7 +496,7 @@ function printFailedAppearResp() {
     ${kpSingleSig(pb, 'Punong Barangay / Pangkat Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
     <div style="margin-top:16px;font-size:11pt;font-weight:bold;">Respondent/s</div>
-    ${kpTwoSig('', '', '', '')}${printFooter()}</div>`, `Form19-FailedAppearResp-${c.caseNo}`);
+    ${kpTwoSig('', '', '', '')}${printFooter()}</div><button onclick="exportFailedAppearRespDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form19-FailedAppearResp-${c.caseNo}`);
 }
 
 /* ════ FORM 20/20-A/20-B — CFA ════ */

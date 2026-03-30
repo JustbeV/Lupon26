@@ -1,0 +1,26 @@
+{
+  "name": "lupon26",
+  "version": "1.0.0",
+  "description": "══════════════════════════════════════════════════════   LUPON NG TAGAPAMAYAPA   Barangay Case Management System   Brgy. Dadiangas West, General Santos City ══════════════════════════════════════════════════════",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustbeV/Lupon26.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JustbeV/Lupon26/issues"
+  },
+  "homepage": "https://github.com/JustbeV/Lupon26#readme",
+  "dependencies": {
+    "docx": "^9.6.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.4"
+  }
+}

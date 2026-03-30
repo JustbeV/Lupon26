@@ -692,3 +692,307 @@ async function exportCFADocx(caseId) {
  
   await saveDocx(doc, `${label}-CFA-${c.caseNo}`);
 }
+
+/* ════════════════════════════════════
+   SHARED: notified line + two blank sigs
+════════════════════════════════════ */
+ 
+function notifiedLine() {
+  return para('Notified this ______ day of _________________, 20_____.', { size: 24, before: 120, after: 60 });
+}
+ 
+function fmtTimeStr(t) {
+  if (!t) return '______';
+  const [h, m] = t.split(':');
+  const hr = parseInt(h);
+  return `${hr > 12 ? hr - 12 : hr || 12}:${m} ${hr >= 12 ? 'PM' : 'AM'}`;
+}
+ 
+ 
+/* ════════════════════════════════════
+   FORM 8 — NOTICE OF HEARING (MEDIATION)
+════════════════════════════════════ */
+ 
+async function exportNoticeHearingMedDocx(caseId) {
+  const c = cases.find(x => x.id === caseId);
+  if (!c) { toast('Case not found.', '#b22222'); return; }
+ 
+  const hDate  = document.getElementById('f8-hdate').value;
+  const hTime  = document.getElementById('f8-htime').value;
+  const date   = document.getElementById('f8-date').value;
+  const hdt    = parseDt(hDate);
+  const dt     = parseDt(date);
+  const cn     = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
+  const pb     = members.find(m => m.role === 'Punong Barangay (Chairperson)');
+  const pbName = pb ? pb.name.toUpperCase() : '';
+ 
+  const header  = await buildKpHeader();
+  const caption = buildCaption(c);
+ 
+  const doc = new Document({
+    sections: [{ properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
+      children: [
+        header, spacer(16), caption, hRule(),
+        para('NOTICE OF HEARING', { align: AlignmentType.CENTER, bold: true, size: 26, before: 80, after: 20 }),
+        para('(MEDIATION PROCEEDINGS)', { align: AlignmentType.CENTER, bold: true, size: 24, after: 80 }),
+        mixedPara([{ text: 'TO: ' }, { text: cn, bold: true }], { size: 24, after: 80 }),
+        para(
+          `You are hereby required to appear before me on the ${hdt.ordDay} day of ${hdt.month}, ${hdt.year} at ${fmtTimeStr(hTime)} o'clock for the hearing of your complaint.`,
+          { size: 24, after: 80 }
+        ),
+        mixedPara([
+          { text: 'This ' }, { text: dt.ordDay, bold: true },
+          { text: ' day of ' }, { text: dt.month, bold: true },
+          { text: ', ' + dt.year + '.' },
+        ], { size: 24, after: 80 }),
+        ...sigLine(pbName, 'Punong Barangay', AlignmentType.LEFT),
+        notifiedLine(),
+        para('Complainant/s', { bold: true, size: 22, after: 40 }),
+        twoSig('', '(Signature)', '', '(Date)'),
+      ],
+    }],
+  });
+  await saveDocx(doc, `Form8-NoticeHearingMed-${c.caseNo}`);
+}
+ 
+ 
+/* ════════════════════════════════════
+   FORM 10 — NOTICE FOR CONSTITUTION OF PANGKAT
+════════════════════════════════════ */
+ 
+async function exportNoticePangkatDocx(caseId) {
+  const c = cases.find(x => x.id === caseId);
+  if (!c) { toast('Case not found.', '#b22222'); return; }
+ 
+  const hDate  = document.getElementById('f10-hdate').value;
+  const hTime  = document.getElementById('f10-htime').value;
+  const date   = document.getElementById('f10-date').value;
+  const hdt    = parseDt(hDate);
+  const dt     = parseDt(date);
+  const cn     = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
+  const rn     = `${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' ' + c.resp.mid : ''}`;
+  const pb     = members.find(m => m.role === 'Punong Barangay (Chairperson)');
+  const pbName = pb ? pb.name.toUpperCase() : '';
+ 
+  const header  = await buildKpHeader();
+  const caption = buildCaption(c);
+ 
+  const doc = new Document({
+    sections: [{ properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
+      children: [
+        header, spacer(16), caption, hRule(),
+        para('NOTICE FOR CONSTITUTION OF PANGKAT', { align: AlignmentType.CENTER, bold: true, size: 24, before: 80, after: 80 }),
+        mixedPara([
+          { text: 'TO: ' }, { text: cn, bold: true },
+          { text: '     and     ' },
+          { text: rn, bold: true },
+        ], { size: 24, after: 20 }),
+        twoSig('', 'Complainant/s', '', 'Respondent/s'),
+        spacer(8),
+        para(
+          `You are hereby required to appear before me on the ${hdt.ordDay} day of ${hdt.month}, ${hdt.year} at ${fmtTimeStr(hTime)} o'clock for the constitution of the Pangkat ng Tagapagkasundo which shall conciliate your dispute. Should you fail to agree on the Pangkat membership or to appear on the aforesaid date for the constitution of the Pangkat, I shall determine the membership thereof by drawing lots.`,
+          { size: 24, after: 80 }
+        ),
+        mixedPara([
+          { text: 'This ' }, { text: dt.ordDay, bold: true },
+          { text: ' day of ' }, { text: dt.month, bold: true },
+          { text: ', ' + dt.year + '.' },
+        ], { size: 24, after: 80 }),
+        ...sigLine(pbName, 'Punong Barangay', AlignmentType.LEFT),
+        notifiedLine(),
+        twoSig('', 'Complainant/s', '', 'Respondent/s'),
+      ],
+    }],
+  });
+  await saveDocx(doc, `Form10-NoticePangkat-${c.caseNo}`);
+}
+ 
+ 
+/* ════════════════════════════════════
+   FORM 11 — NOTICE TO CHOSEN PANGKAT MEMBER
+════════════════════════════════════ */
+ 
+async function exportNoticePangkatMemberDocx(caseId) {
+  const c = cases.find(x => x.id === caseId);
+  if (!c) { toast('Case not found.', '#b22222'); return; }
+ 
+  const mn    = document.getElementById('f11-member').value.trim() || '______________________________';
+  const date  = document.getElementById('f11-date').value;
+  const dt    = parseDt(date);
+  const pb    = members.find(m => m.role === 'Punong Barangay (Chairperson)');
+  const pbName = pb ? pb.name.toUpperCase() : '';
+ 
+  const header  = await buildKpHeader();
+  const caption = buildCaption(c);
+ 
+  const doc = new Document({
+    sections: [{ properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
+      children: [
+        header, spacer(16), caption, hRule(),
+        para(`${dt.ordDay} day of ${dt.month}, ${dt.year}`, { align: AlignmentType.RIGHT, size: 22, after: 60 }),
+        para('NOTICE TO CHOSEN PANGKAT MEMBER', { align: AlignmentType.CENTER, bold: true, size: 24, before: 80, after: 80 }),
+        mixedPara([{ text: 'TO: ' }, { text: mn, bold: true }], { size: 24, after: 80 }),
+        para(
+          'Notice is hereby given that you have been chosen member of the Pangkat ng Tagapagkasundo to amicably conciliate the dispute between the parties in the above-entitled case.',
+          { size: 24, after: 80 }
+        ),
+        ...sigLine(pbName, 'Punong Barangay / Lupon Secretary', AlignmentType.LEFT),
+        spacer(12),
+        para('Received this ______ day of _________________, 20_____.', { size: 24, after: 60 }),
+        ...sigLine('', 'Pangkat Member', AlignmentType.LEFT),
+      ],
+    }],
+  });
+  await saveDocx(doc, `Form11-NoticePangkatMember-${c.caseNo}`);
+}
+ 
+ 
+/* ════════════════════════════════════
+   FORM 12 — NOTICE OF HEARING (CONCILIATION)
+════════════════════════════════════ */
+ 
+async function exportNoticeHearingConDocx(caseId) {
+  const c = cases.find(x => x.id === caseId);
+  if (!c) { toast('Case not found.', '#b22222'); return; }
+ 
+  const hDate = document.getElementById('f12-hdate').value;
+  const hTime = document.getElementById('f12-htime').value;
+  const date  = document.getElementById('f12-date').value;
+  const hdt   = parseDt(hDate);
+  const dt    = parseDt(date);
+  const cn    = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
+  const rn    = `${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' ' + c.resp.mid : ''}`;
+ 
+  const header  = await buildKpHeader();
+  const caption = buildCaption(c);
+ 
+  const doc = new Document({
+    sections: [{ properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
+      children: [
+        header, spacer(16), caption, hRule(),
+        mixedPara([
+          { text: 'TO: ' }, { text: cn, bold: true },
+          { text: '     and     ' },
+          { text: rn, bold: true },
+        ], { size: 24, after: 20 }),
+        twoSig('', 'Complainant/s', '', 'Respondent/s'),
+        spacer(8),
+        para('NOTICE OF HEARING', { align: AlignmentType.CENTER, bold: true, size: 26, before: 80, after: 20 }),
+        para('(CONCILIATION PROCEEDING)', { align: AlignmentType.CENTER, bold: true, size: 24, after: 80 }),
+        para(
+          `You are hereby required to appear before the Pangkat on the ${hdt.ordDay} day of ${hdt.month}, ${hdt.year}, at ${fmtTimeStr(hTime)} o'clock for a hearing of the above-entitled case.`,
+          { size: 24, after: 80 }
+        ),
+        mixedPara([
+          { text: 'This ' }, { text: dt.ordDay, bold: true },
+          { text: ' day of ' }, { text: dt.month, bold: true },
+          { text: ', ' + dt.year + '.' },
+        ], { size: 24, after: 80 }),
+        ...sigLine('', 'Pangkat Chairman', AlignmentType.LEFT),
+        notifiedLine(),
+        twoSig('', 'Complainant/s', '', 'Respondent/s'),
+      ],
+    }],
+  });
+  await saveDocx(doc, `Form12-NoticeHearingCon-${c.caseNo}`);
+}
+ 
+ 
+/* ════════════════════════════════════
+   FORM 18 — NOTICE (COMPLAINANT FAILED TO APPEAR)
+════════════════════════════════════ */
+ 
+async function exportFailedAppearCompDocx(caseId) {
+  const c = cases.find(x => x.id === caseId);
+  if (!c) { toast('Case not found.', '#b22222'); return; }
+ 
+  const cn      = `${c.comp.last}, ${c.comp.first}${c.comp.mid ? ' ' + c.comp.mid : ''}`;
+  const missed  = document.getElementById('f18-missed').value;
+  const hDate   = document.getElementById('f18-hdate').value;
+  const hTime   = document.getElementById('f18-htime').value;
+  const date    = document.getElementById('f18-date').value;
+  const missedDt = parseDt(missed);
+  const hdt     = parseDt(hDate);
+  const dt      = parseDt(date);
+  const pb      = members.find(m => m.role === 'Punong Barangay (Chairperson)');
+  const pbName  = pb ? pb.name.toUpperCase() : '';
+ 
+  const header  = await buildKpHeader();
+  const caption = buildCaption(c);
+ 
+  const doc = new Document({
+    sections: [{ properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
+      children: [
+        header, spacer(16), caption, hRule(),
+        para('NOTICE OF HEARING', { align: AlignmentType.CENTER, bold: true, size: 26, before: 80, after: 20 }),
+        para('(RE: FAILURE TO APPEAR)', { align: AlignmentType.CENTER, bold: true, size: 24, after: 80 }),
+        mixedPara([{ text: 'TO: ' }, { text: cn, bold: true }], { size: 24, after: 10 }),
+        para('Complainant/s', { italic: true, size: 22, after: 80 }),
+        para(
+          `You are hereby required to appear before me/the Pangkat on the ${hdt.ordDay} day of ${hdt.month}, ${hdt.year}, at ${fmtTimeStr(hTime)} o'clock to explain why you failed to appear for mediation/conciliation scheduled on ${missedDt.ordDay} day of ${missedDt.month}, ${missedDt.year} and why your complaint should not be dismissed, a certificate to bar the filing of your action in court/government office should not be issued, and contempt proceedings should not be initiated in court for willful failure or refusal to appear before the Punong Barangay/Pangkat ng Tagapagkasundo.`,
+          { size: 24, after: 80 }
+        ),
+        mixedPara([
+          { text: 'This ' }, { text: dt.ordDay, bold: true },
+          { text: ' day of ' }, { text: dt.month, bold: true },
+          { text: ', ' + dt.year + '.' },
+        ], { size: 24, after: 80 }),
+        ...sigLine(pbName, 'Punong Barangay / Pangkat Chairman', AlignmentType.LEFT),
+        notifiedLine(),
+        para('Complainant/s', { bold: true, size: 22, after: 40 }),
+        twoSig('', '(Signature)', '', '(Date)'),
+      ],
+    }],
+  });
+  await saveDocx(doc, `Form18-FailedAppearComp-${c.caseNo}`);
+}
+ 
+ 
+/* ════════════════════════════════════
+   FORM 19 — NOTICE (RESPONDENT FAILED TO APPEAR)
+════════════════════════════════════ */
+ 
+async function exportFailedAppearRespDocx(caseId) {
+  const c = cases.find(x => x.id === caseId);
+  if (!c) { toast('Case not found.', '#b22222'); return; }
+ 
+  const rn      = `${c.resp.last}, ${c.resp.first}${c.resp.mid ? ' ' + c.resp.mid : ''}`;
+  const missed  = document.getElementById('f19-missed').value;
+  const hDate   = document.getElementById('f19-hdate').value;
+  const hTime   = document.getElementById('f19-htime').value;
+  const date    = document.getElementById('f19-date').value;
+  const missedDt = parseDt(missed);
+  const hdt     = parseDt(hDate);
+  const dt      = parseDt(date);
+  const pb      = members.find(m => m.role === 'Punong Barangay (Chairperson)');
+  const pbName  = pb ? pb.name.toUpperCase() : '';
+ 
+  const header  = await buildKpHeader();
+  const caption = buildCaption(c);
+ 
+  const doc = new Document({
+    sections: [{ properties: { page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
+      children: [
+        header, spacer(16), caption, hRule(),
+        para('NOTICE OF HEARING', { align: AlignmentType.CENTER, bold: true, size: 26, before: 80, after: 20 }),
+        para('(RE: FAILURE TO APPEAR)', { align: AlignmentType.CENTER, bold: true, size: 24, after: 80 }),
+        mixedPara([{ text: 'TO: ' }, { text: rn, bold: true }], { size: 24, after: 10 }),
+        para('Respondent/s', { italic: true, size: 22, after: 80 }),
+        para(
+          `You are hereby required to appear before me/the Pangkat on the ${hdt.ordDay} day of ${hdt.month}, ${hdt.year}, at ${fmtTimeStr(hTime)} o'clock to explain why you failed to appear for mediation/conciliation scheduled on ${missedDt.ordDay} day of ${missedDt.month}, ${missedDt.year} and why your counterclaim (if any) arising from the complaint should not be dismissed, a certificate to bar the filing of said counterclaim in court/government office should not be issued, and contempt proceedings should not be initiated in court for willful failure or refusal to appear before the Punong Barangay/Pangkat ng Tagapagkasundo.`,
+          { size: 24, after: 80 }
+        ),
+        mixedPara([
+          { text: 'This ' }, { text: dt.ordDay, bold: true },
+          { text: ' day of ' }, { text: dt.month, bold: true },
+          { text: ', ' + dt.year + '.' },
+        ], { size: 24, after: 80 }),
+        ...sigLine(pbName, 'Punong Barangay / Pangkat Chairman', AlignmentType.LEFT),
+        notifiedLine(),
+        para('Respondent/s', { bold: true, size: 22, after: 40 }),
+        twoSig('', '(Signature)', '', '(Date)'),
+      ],
+    }],
+  });
+  await saveDocx(doc, `Form19-FailedAppearResp-${c.caseNo}`);
+}
