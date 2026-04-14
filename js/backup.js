@@ -8,6 +8,22 @@
 
 let restoreData = null;   // Holds parsed backup file pending confirmation
 
+/**
+ * Show a notification without assuming a global `toast()` helper exists.
+ * Falls back to `alert()` when toast support is unavailable.
+ * @param {string} message
+ * @param {string} [color]
+ */
+function notify(message, color) {
+  if (typeof toast === 'function') {
+    toast(message, color);
+    return;
+  }
+
+  // Strip emoji for alert dialogs so the fallback stays readable.
+  alert(String(message).replace(/[^\u0000-\u007F]+/g, '').trim());
+}
+
 
 /* 
    SUMMARY
@@ -49,7 +65,7 @@ function exportBackup() {
   a.click();
   URL.revokeObjectURL(url);
 
-  toast('💾 Backup exported!');
+  notify('💾 Backup exported!');
 }
 
 
@@ -73,7 +89,7 @@ function previewRestore(event) {
 
       // Validate minimum structure
       if (!data.cases || !data.hearings) {
-        toast('⚠️ Invalid backup file.', '#b22222');
+        notify('⚠️ Invalid backup file.', '#b22222');
         return;
       }
 
@@ -96,7 +112,7 @@ function previewRestore(event) {
       document.getElementById('restore-btn').style.display     = 'block';
 
     } catch (err) {
-      toast('⚠️ Could not read file. Ensure it is a valid .json backup.', '#b22222');
+      notify('⚠️ Could not read file. Ensure it is a valid .json backup.', '#b22222');
     }
   };
 
@@ -133,7 +149,7 @@ function confirmRestore() {
   document.getElementById('restore-file').value            = '';
 
   updateBackupSummary();
-  toast('Data merged successfully!');
+  notify('Data merged successfully!');
 }
 
 
@@ -159,5 +175,5 @@ function clearAllData() {
   persist();
   updateBackupSummary();
   renderDashboard();
-  toast('All data cleared.', '#b22222');
+  notify('All data cleared.', '#b22222');
 }

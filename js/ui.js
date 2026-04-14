@@ -78,11 +78,6 @@ function printBtns(extra = '') {
   return `
     <div class="p-noprint">
       ${extra}
-      <button onclick="window.print()"
-        style="background:#0d2137;color:#fff;border:none;padding:10px 24px;
-               border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
-        🖨️ Print
-      </button>
       <button onclick="closePrint()"
         style="background:#6b7280;color:#fff;border:none;padding:10px 18px;
                border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
@@ -210,6 +205,19 @@ function fmtDate(d) {
   return new Date(d + 'T00:00:00').toLocaleDateString('en-PH', {
     year: 'numeric', month: 'long', day: 'numeric'
   });
+}
+
+/**
+ * Format a date string with underlines for deadline display.
+ * e.g. "the day <span style="border-bottom:1px solid #000;">31</span> day of <span style="border-bottom:1px solid #000;">March</span>, 20<span style="border-bottom:1px solid #000;">26</span>"
+ */
+function fmtDeadline(d) {
+  if (!d) return '—';
+  const date = new Date(d + 'T00:00:00');
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-PH', { month: 'long' });
+  const year = date.getFullYear().toString().slice(-2);
+  return `the day <span style="border-bottom:1px solid #000;">${day}</span> day of <span style="border-bottom:1px solid #000;">${month}</span>, 20<span style="border-bottom:1px solid #000;">${year}</span>`;
 }
 
 /**

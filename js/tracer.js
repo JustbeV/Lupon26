@@ -30,7 +30,11 @@ function printTracer() {
     <div id="tracer-doc">
       ${tracerBody(caseNo, cname, rname)}
     </div>
-    ${printBtns()}
+    ${printBtns(`<button onclick="exportTracerDocx()"
+  style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;
+         border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
+  Export to Word (.docx)
+</button>`)}
   `);
 }
 

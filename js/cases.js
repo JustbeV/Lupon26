@@ -198,9 +198,7 @@ function renderCases() {
       <td style="white-space:nowrap;">
         <button class="btn btn-sm btn-outline" title="View / Edit Status" onclick="viewCase(${c.id})">👁 View</button>
         <button class="btn btn-sm btn-gold"    title="Print"              onclick="printCase(${c.id})">🖨️</button>
-        <button onclick="exportComplaintDocx(${c.id})">
-  Export to Word (.docx)
-</button>
+        <button class="btn btn-sm btn-outline" title="Export to Word (.docx)" onclick="exportComplaintDocx(${c.id})">📄</button>
         <button class="btn btn-sm btn-danger"  title="Delete"             onclick="delCase(${c.id})">🗑️</button>
       </td>
     </tr>`).join('');
@@ -281,8 +279,8 @@ function viewCase(id) {
 
     <!-- Actions -->
     <div class="btn-row">
-      <button class="btn btn-gold"    onclick="printCase(${c.id})">🖨️ Print Case</button>
-      <button class="btn btn-outline" onclick="closeModal('view-modal')">Close</button>
+       <button class="btn btn-gold"    onclick="printCase(${c.id})">🖨️ Print Case</button>
+       <button class="btn btn-outline" onclick="closeModal('view-modal')">Close</button>
     </div>`;
 
   document.getElementById('view-modal').classList.add('open');
@@ -370,7 +368,7 @@ function printCase(id) {
   <div style="font-size:11pt;">Punong Barangay</div>
 </div>
 
-    ${printBtns(exportWordBtn(`Complaint-${c.caseNo}-${c.comp.last}`))}
+     ${printBtns()}
   `);
 }
 

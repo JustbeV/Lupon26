@@ -172,7 +172,7 @@ function fillDocDDs() {
   ['sum-date', 'cfa-date', 'cert-date', 'cs-date', 'f8-date', 'f8-hdate', 'f10-date', 'f10-hdate',
     'f11-date', 'f12-date', 'f12-hdate', 'f13-date', 'f13-hdate', 'f14-date', 'f15-date',
     'f17-date', 'f18-date', 'f18-hdate', 'f19-date', 'f19-hdate', 'f21-date', 'f22-date',
-    'f23-date', 'f24-date', 'f24-hdate', 'f25-date', 'f2-date', 'f3-date', 'f3-oath', 'f5-date', 'f6-date', 'f1-date', 'f1-deadline', 'f28-date'].forEach(id => {
+    'f23-date', 'f24-date', 'f24-hdate', 'f25-date', 'f2-date', 'f3-date', 'f3-oath', 'f5-date', 'f6-date', 'f1-date', 'f1-deadline'].forEach(id => {
       const el = document.getElementById(id); if (el && !el.value) el.value = today;
     });
 
@@ -224,7 +224,7 @@ function printComplaintSheet() {
 </div>
 
     ${kpSingleSig(pb, 'Punong Barangay / Lupon Chairman')}
-    </div><button onclick="exportComplaintDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form7-Complaint-${c.caseNo}`);
+    ${printFooter()}</div><button onclick="exportComplaintDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form7-Complaint-${c.caseNo}`);
 }
 
 /* ════ FORM 8 — NOTICE OF HEARING (MEDIATION) ════ */
@@ -247,7 +247,7 @@ function printNoticeHearingMed() {
     ${kpSingleSig(pb, 'Punong Barangay / Lupon Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this ${kpFilledLine(notified.dayStr, 28)} day of ${kpFilledLine(notified.monthStr, 110)}, 20${kpFilledLine(notified.yearStr2, 30)}.</div>
     <div style="margin-top:16px;font-size:11pt;font-weight:bold;">Complainant/s</div>
-    ${kpTwoSig('', '', '', '')}</div><button onclick="exportNoticeHearingMedDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form8-NoticeHearingMed-${c.caseNo}`);
+    ${kpTwoSig('', '', '', '')}${printFooter()}</div><button onclick="exportNoticeHearingMedDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form8-NoticeHearingMed-${c.caseNo}`);
 }
 
 /* ════ FORM 9 — SUMMONS ════ */
@@ -338,7 +338,7 @@ function printNoticePangkat() {
     <div class="kp-body">${kpDateLine(document.getElementById('f10-date').value)}</div>
     ${kpSingleSig(pb, 'Punong Barangay')}
     <div class="kp-body" style="margin-top:30px;">Notified this ${kpFilledLine(notified.dayStr, 28)} day of ${kpFilledLine(notified.monthStr, 110)}, 20${kpFilledLine(notified.yearStr2, 30)}.</div>
-    ${kpTwoSig(cn, 'Complainant/s', rn, 'Respondent/s')}</div><button onclick="exportNoticePangkatDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form10-NoticePangkat-${c.caseNo}`);
+    ${kpTwoSig(cn, 'Complainant/s', rn, 'Respondent/s')}${printFooter()}</div><button onclick="exportNoticePangkatDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form10-NoticePangkat-${c.caseNo}`);
 }
 
 /* ════ FORM 11 — NOTICE TO CHOSEN PANGKAT MEMBER ════ */
@@ -357,7 +357,7 @@ function printNoticePangkatMember() {
     <div class="kp-body" style="margin-top:14px;">Notice is hereby given that you have been chosen member of the Pangkat ng Tagapagkasundo to amicably conciliate the dispute between the parties in the above-entitled case.</div>
     ${kpSingleSig(pb, 'Punong Barangay / Lupon Secretary')}
     <div class="kp-body" style="margin-top:30px;">Received this ${kpFilledLine(received.dayStr, 28)} day of ${kpFilledLine(received.monthStr, 110)}, 20${kpFilledLine(received.yearStr2, 30)}.</div>
-    ${kpSingleSig(mn, 'Pangkat Member')}</div><button onclick="exportNoticePangkatMemberDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form11-NoticePangkatMember-${c.caseNo}`);
+    ${kpSingleSig(mn, 'Pangkat Member')}${printFooter()}</div><button onclick="exportNoticePangkatMemberDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form11-NoticePangkatMember-${c.caseNo}`);
 }
 
 /* ════ FORM 12 — NOTICE OF HEARING (CONCILIATION) ════ */
@@ -390,7 +390,7 @@ function printNoticeHearingCon() {
     <div class="kp-body">${kpDateLine(document.getElementById('f12-date').value)}</div>
     ${kpSingleSig(chairName, 'Pangkat Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this ${kpFilledLine(notified.dayStr, 28)} day of ${kpFilledLine(notified.monthStr, 110)}, 20${kpFilledLine(notified.yearStr2, 30)}.</div>
-    ${kpTwoSig(cn, 'Complainant/s', rn, 'Respondent/s')}</div><button onclick="exportNoticeHearingConDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form12-NoticeHearingCon-${c.caseNo}`);
+    ${kpTwoSig(cn, 'Complainant/s', rn, 'Respondent/s')}${printFooter()}</div><button onclick="exportNoticeHearingConDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form12-NoticeHearingCon-${c.caseNo}`);
 }
 
 /* ════ FORM 13 — SUBPOENA ════ */
@@ -409,7 +409,7 @@ function printSubpoena() {
     <div class="kp-body">${kpDateLine(document.getElementById('f13-date').value)}</div>
     ${kpSingleSig('', issuer === 'pangkat' ? 'Pangkat Chairman' : 'Punong Barangay / Pangkat Chairman')}
     <div class="kp-note">(Cross out whichever one is not applicable.)</div>
-    </div><button onclick="exportSubpoenaDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form13-Subpoena-${c.caseNo}`);
+    ${printFooter()}</div><button onclick="exportSubpoenaDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form13-Subpoena-${c.caseNo}`);
 }
 
 /* ════ FORM 14 — AGREEMENT FOR ARBITRATION ════ */
@@ -428,7 +428,7 @@ function printArbitrationAgreement() {
     ${kpTwoSig(cn, 'Complainant/s', rn, 'Respondent/s')}
     <div style="margin-top:24px;font-size:12pt;font-weight:bold;">ATTESTATION</div>
     <div class="kp-body" style="margin-top:8px;">I hereby certify that the foregoing Agreement for Arbitration was entered into by the parties freely and voluntarily, after I had explained to them the nature and consequences of such agreement.</div>
-    ${kpSingleSig(chair, 'Punong Barangay / Pangkat Chairman')}<button onclick="exportArbitrationAgreementDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form14-ArbitrationAgreement-${c.caseNo}`);
+    ${kpSingleSig(chair, 'Punong Barangay / Pangkat Chairman')}<button onclick="exportArbitrationAgreementDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form14-ArbitrationAgreement-${c.caseNo}`);
 }
 
 /* ════ FORM 15 — ARBITRATION AWARD ════ */
@@ -459,7 +459,7 @@ function printArbitrationAward() {
     <div style="margin-top:16px;font-size:12pt;font-weight:bold;">ATTESTED:</div>
     ${kpSingleSig(attested, attestBy === 'secretary' ? 'Punong Barangay / Lupon Secretary**' : 'Lupon Chairman**')}
     <div class="kp-note">* To be signed by either the Punong Barangay or the Pangkat Chairman, whoever made the award.<br>** To be signed by the Punong Barangay if the award is by the Pangkat Chairman, and by the Lupon Secretary if the award is made by the Punong Barangay.</div>
-    <button onclick="exportArbitrationAwardDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form15-ArbitrationAward-${c.caseNo}`);
+    <button onclick="exportArbitrationAwardDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form15-ArbitrationAward-${c.caseNo}`);
 }
 
 /* ════ FORM 16 — AMICABLE SETTLEMENT ════ */
@@ -524,7 +524,7 @@ function printCertificate() {
   </div>
 </div>
     <div class="kp-note">* Failure to repudiate the settlement within ten (10) days from date of settlement shall be deemed a waiver of the right to challenge on said grounds. (R.A. 7160, Sec. 416)</div>
-    </div>
+    ${printFooter()}</div>
     <button onclick="exportAmicableSettlementDocx(${s.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
       Export to Word (.docx)
     </button>`, `Form16-AmicableSettlement-${s.caseNo}`);
@@ -573,7 +573,7 @@ function printRepudiation() {
     <div class="kp-body" style="margin-top:24px;">Received and filed this ${kpFilledLine(dayStr, 28)} day of ${kpFilledLine(monthStr, 110)}, 20${kpFilledLine(yearStr2, 30)}.</div>
     ${kpSingleSig(pbOfficial, 'Punong Barangay')}
     <div class="kp-note">* Failure to repudiate the settlement or the arbitration agreement within the time limits set (ten (10) days from date of settlement and five (5) days from the date of arbitration agreement) shall be deemed a waiver of the right to challenge on said grounds.</div>
-    <button onclick="exportRepudiationDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form17-Repudiation-${c.caseNo}`);
+    <button onclick="exportRepudiationDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form17-Repudiation-${c.caseNo}`);
 }
 
 /* ════ FORM 18 — NOTICE OF HEARING (COMPLAINANT FAILED TO APPEAR) ════ */
@@ -600,7 +600,7 @@ function printFailedAppearComp() {
     ${kpPartyNameLines(cn)}
     <div style="margin-top:16px;font-size:11pt;font-weight:bold;">Respondent</div>
     ${kpPartyNameLines(rn)}
-    </div><button onclick="exportFailedAppearCompDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form18-FailedAppearComp-${c.caseNo}`);
+    ${printFooter()}</div><button onclick="exportFailedAppearCompDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form18-FailedAppearComp-${c.caseNo}`);
 }
 
 /* ════ FORM 19 — NOTICE OF HEARING (RESPONDENT FAILED TO APPEAR) ════ */
@@ -627,7 +627,7 @@ function printFailedAppearResp() {
     ${kpPartyNameLines(rn)}
     <div style="margin-top:16px;font-size:11pt;font-weight:bold;">Complainant/s:</div>
     ${kpPartyNameLines(cn)}
-    </div><button onclick="exportFailedAppearRespDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form19-FailedAppearResp-${c.caseNo}`);
+    ${printFooter()}</div><button onclick="exportFailedAppearRespDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form19-FailedAppearResp-${c.caseNo}`);
 }
 
 /* ════ FORM 20/20-A/20-B — CFA ════ */
@@ -651,7 +651,7 @@ function printCFA() {
     <div class="kp-body" style="margin-top:16px;">${kpDateLine(document.getElementById('cfa-date').value)}</div>
     ${kpSingleSig(sec, 'Pangkat Secretary / Lupon Secretary')}
     ${kpAttestedBy(cap, `Pangkat Chairman / Lupon Chairman<br>${cfg.brgy}`)}
-    </div>
+    ${printFooter()}</div>
     <button onclick="exportCFADocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">
       Export to Word (.docx)
     </button>`, `${label}-CFA-${c.caseNo}`);
@@ -673,7 +673,7 @@ function printBarAction() {
     <div style="margin-top:16px;font-size:12pt;font-weight:bold;">Attested:</div>
     ${kpSingleSig(chair, 'Lupon Chairman / Pangkat Chairman')}
     <div class="kp-note">IMPORTANT: If Lupon Secretary makes the certification, the Lupon Chairman attests. If the Pangkat Secretary makes the certification, the Pangkat Chairman attests.</div>
-    <button onclick="exportBarActionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form21-BarAction-${c.caseNo}`);
+    <button onclick="exportBarActionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form21-BarAction-${c.caseNo}`);
 }
 
 /* ════ FORM 22 — CERTIFICATION TO BAR COUNTERCLAIM ════ */
@@ -691,7 +691,7 @@ function printBarCounterclaim() {
     <div style="margin-top:16px;font-size:12pt;font-weight:bold;">Attested:</div>
     ${kpSingleSig(chair, 'Lupon Chairman / Pangkat Chairman')}
     <div class="kp-note">IMPORTANT: If Lupon Secretary makes the certification, the Lupon Chairman attests. If the Pangkat Secretary makes the certification, the Pangkat Chairman attests.</div>
-    <button onclick="exportBarCounterclaimDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form22-BarCounterclaim-${c.caseNo}`);
+    <button onclick="exportBarCounterclaimDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form22-BarCounterclaim-${c.caseNo}`);
 }
 
 /* ════ FORM 23 — MOTION FOR EXECUTION ════ */
@@ -713,7 +713,7 @@ function printMotionExecution() {
     <div class="kp-body" style="margin-top:14px;">WHEREFORE, Complainant/s Respondent/s requests that the corresponding writ of execution be issued by the Lupon Chairman in this case.</div>
     <div class="kp-body" style="margin-top:14px;">${kpDateLine(document.getElementById('f23-date').value)}</div>
     ${kpTwoSig(filer === 'complainant' ? cn : '', 'Complainant/s', filer === 'respondent' ? rn : '', 'Respondent/s')}
-    <button onclick="exportMotionExecutionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form23-MotionExecution-${c.caseNo}`);
+    <button onclick="exportMotionExecutionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form23-MotionExecution-${c.caseNo}`);
 }
 
 /* ════ FORM 24 — NOTICE OF HEARING (MOTION FOR EXECUTION) ════ */
@@ -732,7 +732,7 @@ function printNoticeExecution() {
     <div class="kp-body">${kpDateLine(document.getElementById('f24-date').value)}</div>
     ${kpSingleSig('', 'Punong Barangay / Lupon Chairman')}
     <div class="kp-body" style="margin-top:30px;">Notified this <span class="kp-line kp-line-sm"></span> day of <span class="kp-line"></span>, 20<span class="kp-line kp-line-sm"></span>.</div>
-    ${kpTwoSig('', '(Signature) — Complainant/s', '', '(Signature) — Respondent/s')}<button onclick="exportNoticeExecutionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form24-NoticeExecution-${c.caseNo}`);
+    ${kpTwoSig('', '(Signature) — Complainant/s', '', '(Signature) — Respondent/s')}<button onclick="exportNoticeExecutionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form24-NoticeExecution-${c.caseNo}`);
 }
 
 /* ════ FORM 25 — NOTICE OF EXECUTION ════ */
@@ -756,7 +756,7 @@ function printNoticeOfExecution() {
     <div class="kp-body">WHEREAS, neither party filed a sworn statement of repudiation of the settlement within ten (10) days from the date of settlement, and the same is now final and executory;</div>
     <div class="kp-body">NOW THEREFORE, you <span class="kp-line kp-line-lg">${cn}</span> and <span class="kp-line kp-line-lg">${rn}</span> are hereby notified that the writ of execution of the above-stated settlement/award will be effected on <span class="kp-line" style="min-width:160px;">${ed}</span> at <span class="kp-line kp-line-sm">${et}</span> o'clock, at <span class="kp-line" style="min-width:200px;">${ev}</span>.</div>
     <div class="kp-body">${kpDateLine(document.getElementById('f25-date').value)}</div>
-    ${kpSingleSig('', 'Punong Barangay / Lupon Chairman')}<button onclick="exportNoticeOfExecutionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button></div>`, `Form25-NoticeOfExecution-${c.caseNo}`);
+    ${kpSingleSig('', 'Punong Barangay / Lupon Chairman')}<button onclick="exportNoticeOfExecutionDocx(${c.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>${printFooter()}</div>`, `Form25-NoticeOfExecution-${c.caseNo}`);
 }
 
 /* ════ FORM 2 — APPOINTMENT ════ */
@@ -774,7 +774,7 @@ function printAppointment() {
     <div style="margin-top:30px;font-size:12pt;font-weight:bold;">ATTESTED:</div>
     <div style="margin-top:44px;text-align:left;"><div class="kp-line" style="min-width:0;">${sec || ''}</div><div style="font-size:11pt;margin-top:4px;">Barangay Secretary</div></div>
     <button onclick="exportAppointmentDocx(${m.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>
-    </div>`, `Form2-Appointment-${m.name.replace(/\s+/g, '-')}`);
+    ${printFooter()}</div>`, `Form2-Appointment-${m.name.replace(/\s+/g, '-')}`);
 }
 
 /* ════ FORM 3 — NOTICE OF APPOINTMENT ════ */
@@ -795,7 +795,7 @@ function printNoticeAppointment() {
 
     <div class="kp-body">Please be informed that you have been appointed by the Punong Barangay as a <strong>MEMBER OF THE LUPONG TAGAPAMAYAPA</strong>, effective upon taking your oath of office, and until a new Lupon is constituted on the third year following your appointment. You may take your oath of office before the Punong Barangay on <span class="kp-line" style="min-width:0;">${oathDate}</span>.</div>
     <div class="kp-body" style="margin-top:16px;">Very truly yours,</div>
-    ${kpSingleSig(sec, 'Barangay Secretary')}</div>`, `Form3-NoticeAppointment-${selected.map(o => members.find(x => x.id == o.value)?.name.replace(/\s+/g, '-') || '').join('-')}`);
+    ${kpSingleSig(sec, 'Barangay Secretary')}${printFooter()}</div>`, `Form3-NoticeAppointment-${selected.map(o => members.find(x => x.id == o.value)?.name.replace(/\s+/g, '-') || '').join('-')}`);
 }
 
 /* ════ FORM 5 — OATH OF OFFICE ════ */
@@ -816,7 +816,7 @@ function printOathOfOffice() {
     <div class="kp-body" style="font-size:10pt;font-style:italic;">(In case of affirmation the last sentence will be omitted.)</div>
     ${kpSingleSig(m.name, 'Member')}
     <div class="kp-body" style="margin-top:30px;">SUBSCRIBED AND SWORN TO (or affirmed) before me this <u>${day}</u> day of <u>${month}</u>, 20<u>${year}</u>.</div>
-    <div style="margin-left:auto;width:50%;">${kpSingleSig(pb, 'Punong Barangay')}</div></div> <button onclick="exportOathOfOfficeDocx(${m.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>
+    <div style="margin-left:auto;width:50%;">${kpSingleSig(pb, 'Punong Barangay')}</div>${printFooter()}</div> <button onclick="exportOathOfOfficeDocx(${m.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>
 `, `Form5-OathOfOffice-${m.name.replace(/\s+/g, '-')}`);
 }
 
@@ -864,7 +864,7 @@ function printWithdrawal() {
       <div style="font-size:11pt;margin-top:4px;">(Signature of withdrawn member)</div>
     </div>
     <div class="kp-note">NOTE: The members of the Lupon conforming to the withdrawal must personally affix their signatures or thumb marks. The withdrawal must be conformed to by more than one-half of the total number of members of the Lupon including the Punong Barangay and the member concerned.</div>
-    </div><button onclick="exportWithdrawalDocx(${m.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form6-Withdrawal-${m.name.replace(/\s+/g, '-')}`);
+    ${printFooter()}</div><button onclick="exportWithdrawalDocx(${m.id})" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>`, `Form6-Withdrawal-${m.name.replace(/\s+/g, '-')}`);
 }
 
 /* ════ FORM 1 — NOTICE TO CONSTITUTE THE LUPON ════ */
@@ -932,13 +932,13 @@ function printListLuponMembers() {
   // Automatically find Punong Barangay and Secretary from members
   const pbMember = members.find(m => m.role === 'Punong Barangay (Chairperson)');
   const secMember = members.find(m => m.role === 'Barangay Secretary' || m.role === 'Lupon Secretary');
-
+  
   const pb = pbMember ? pbMember.name : '______________________________';
   const sec = secMember ? secMember.name : '______________________________';
 
   // Use only Lupon Members for the list
   const luponMembers = members.filter(m => m.role === 'Lupon Member');
-
+  
   let rows = '';
   let count = 0;
   for (let i = 0; i < luponMembers.length; i++) {
@@ -962,46 +962,51 @@ function printListLuponMembers() {
     ${kpSingleSig(sec, 'Barangay / Lupon Secretary')}
     <div class="kp-note">IMPORTANT: This list shall be posted in three (3) conspicuous places in the barangay for the duration of the terms of office of those named above.<br>WARNING: Tearing or defacing this notice shall be subject to punishment according to law.</div>
     <button onclick="exportListLuponMembersDocx()" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>
-    </div>`, 'Form4-ListLuponMembers');
+    ${printFooter()}</div>`, 'Form4-ListLuponMembers');
 }
 
 /* ════ FORM 28 — MONTHLY TRANSMITTAL OF FINAL REPORTS ════ */
 function printMonthlyTransmittal() {
-  const date = document.getElementById('f28-date').value;
+  const date  = document.getElementById('f28-date').value;
   const judge = document.getElementById('f28-judge').value.trim() || '______________________________';
-  const city = document.getElementById('f28-city').value.trim() || cfg.muni;
-  const sec = document.getElementById('f28-sec').value.trim() || '______________________________';
-  const dt = parseDateParts(date);
+  const city  = document.getElementById('f28-city').value.trim()  || cfg.muni;
+  const sec   = document.getElementById('f28-sec').value.trim()   || '______________________________';
+  const dt    = parseDateParts(date);
 
   const settled = cases.filter(c => c.status === 'Settled' || c.status === 'Escalated');
   let rows = '';
   for (let i = 0; i < 10; i++) {
     const c = settled[i];
     rows += `<tr>
-      <td style="border:1px solid #000;padding:4px 8px;text-align:center;">${i + 1}</td>
-      <td style="border:1px solid #000;padding:4px 8px;">${c ? c.caseNo : '&nbsp;'}</td>
-      <td style="border:1px solid #000;padding:4px 8px;">${c ? `${c.comp.last}, et al. vs. ${c.resp.last}, et al.` : '&nbsp;'}</td>
+      <td style="border:1px solid #000;padding:4px 8px;text-align:center;background:#fff;">${i + 1}</td>
+      <td style="border:1px solid #000;padding:4px 8px;background:#fff;">${c ? c.caseNo : '&nbsp;'}</td>
+      <td style="border:1px solid #000;padding:4px 8px;background:#fff;">${c ? `${c.comp.last}, et al. vs. ${c.resp.last}, et al.` : '&nbsp;'}</td>
     </tr>`;
   }
 
-  kpShow(`<div class="kp-wrap">${kpHeader().replace('OFFICE OF THE PUNONG BARANGAY', 'OFFICE OF THE LUPONG TAGAPAMAYAPA')}
+  const hdr = kpHeader()
+    .replace('OFFICE OF THE PUNONG BARANGAY', 'OFFICE OF THE LUPONG TAGAPAMAYAPA</div><div class="kp-office">OFFICE OF THE BARANGAY CAPTAIN');
+
+  kpShow(`<div class="kp-wrap">${hdr}
     <div style="text-align:right;font-size:11pt;margin-bottom:10px;">${fmtDate(date)}</div>
     <div class="kp-title" style="font-size:13pt;">MONTHLY TRANSMITTAL OF FINAL REPORTS</div>
     <div class="kp-body">To: City/Municipal Judge <span class="kp-line" style="min-width:200px;">${judge}</span></div>
     <div class="kp-body" style="padding-left:60px;font-style:italic;">(${city})</div>
     <div class="kp-body" style="margin-top:14px;">Enclosed herewith are the final reports of settlement of disputes and arbitration awards made by the Barangay Captain/Pangkat Tagapagkasundo in the following cases:</div>
     <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:11pt;">
-     <tr style="background:#FFFFFF;">
-  <th style="border:1px solid; padding:6px 8px;width:40px;">#</th>
-  <th style="border:1px solid; padding:6px 8px;width:140px;">Barangay Case No.</th>
-  <th style="border:1px solid; padding:6px 8px;">Title (Complainant, et al. vs. Respondent, et al.)</th>
-</tr>
+      <tr style="background:#fff;">
+        <th style="border:1px solid #000;padding:6px 8px;width:40px;background:#fff;">#</th>
+        <th style="border:1px solid #000;padding:6px 8px;width:140px;background:#fff;">Barangay Case No.</th>
+        <th style="border:1px solid #000;padding:6px 8px;background:#fff;">Title (Complainant, et al. vs. Respondent, et al.)</th>
+      </tr>
       ${rows}
     </table>
-    ${kpSingleSig(sec, '(Clerk of Court)')}
+    <div style="margin-left:auto;width:50%;">${kpSingleSig(sec, 'Lupon/Pangkat Secretary')}</div>
     <div class="kp-body" style="margin-top:30px;">
-      
-      
-      <button onclick="exportMonthlyTransmittalDocx()" style="background:#1a5c38;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:.94rem;cursor:pointer;font-weight:700;">Export to Word (.docx)</button>
-    </div>`, 'Form28-MonthlyTransmittal');
+      Received this <span class="kp-line kp-line-sm">${dt.dayStr}</span> day of
+      <span class="kp-line">${dt.monthStr}</span>, 20<span class="kp-line kp-line-sm">${dt.yearStr2}</span>.
+    </div>
+    ${kpSingleSig('', 'City/Municipal Judge')}
+    ${printFooter()}</div>`,
+    'Form28-MonthlyTransmittal');
 }
